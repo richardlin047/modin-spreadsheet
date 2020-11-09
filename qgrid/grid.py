@@ -1,5 +1,6 @@
 import ipywidgets as widgets
-import pandas as pd
+# import pandas as pd
+import modin.pandas as pd
 import numpy as np
 import json
 
@@ -27,10 +28,11 @@ from six import string_types
 # have our own copy of the panda's 0.20.0 implementation that we use for old
 # versions of pandas.
 from distutils.version import LooseVersion
-if LooseVersion(pd.__version__) > LooseVersion('0.20.0'):
-    import pandas.io.json as pd_json
-else:
-    from . import pd_json
+# pd_json.to_json is replaced with modin's df.to_json
+# if LooseVersion(mpd.__version__) > LooseVersion('0.20.0'):
+#     import pandas.io.json as pd_json
+# else:
+#     from . import pd_json
 
 
 class _DefaultSettings(object):
@@ -93,7 +95,9 @@ class _DefaultSettings(object):
 
     @property
     def precision(self):
-        return self._precision or pd.get_option('display.precision') - 1
+        # return self._precision or mpd.get_option('display.precision') - 1
+        # TODO: Replace with some default method
+        return self._precision or 6
 
     @property
     def column_options(self):
@@ -957,8 +961,12 @@ class QgridWidget(widgets.DOMWidget):
         else:
             self._row_styles = {}
 
-        df_json = pd_json.to_json(None, df,
-                                  orient='table',
+        # df_json = pd_json.to_json(None, df,
+        #                           orient='table',
+        #                           date_format='iso',
+        #                           double_precision=self.precision)
+        # Replace with modin compatible to_json method
+        df_json = df.to_json(None, orient='table',
                                   date_format='iso',
                                   double_precision=self.precision)
 
@@ -1037,8 +1045,12 @@ class QgridWidget(widgets.DOMWidget):
         # and then call 'to_json' again to get a new version of the table
         # json that has interval columns replaced with text columns
         if len(self._interval_columns) > 0 or len(self._period_columns) > 0:
-            df_json = pd_json.to_json(None, df,
-                                      orient='table',
+            # df_json = pd_json.to_json(None, df,
+            #                           orient='table',
+            #                           date_format='iso',
+            #                           double_precision=self.precision)
+            # Replace with modin compatible to_json method
+            df_json = df.to_json(None, orient='table',
                                       date_format='iso',
                                       double_precision=self.precision)
 
