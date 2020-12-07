@@ -866,7 +866,8 @@ class QgridWidget(widgets.DOMWidget):
 
         self._df_range = new_df_range
 
-        df = df.iloc[from_index:to_index]
+        if len(df) > 0:
+            df = df.iloc[from_index:to_index]
 
         self._row_count = len(self._df.index)
 
