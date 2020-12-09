@@ -1,6 +1,6 @@
 import ipywidgets as widgets
-# import pandas as pd
 import modin.pandas as pd
+import pandas as pd2
 import numpy as np
 import json
 
@@ -17,7 +17,8 @@ from traitlets import (
     Tuple,
     Any,
     All,
-    parse_notifier_name
+    parse_notifier_name,
+    Union
 )
 from itertools import chain
 from uuid import uuid4
@@ -497,9 +498,9 @@ def show_grid(data_frame,
         )
 
     # if a Series is passed in, convert it to a DataFrame
-    if isinstance(data_frame, pd.Series):
+    if isinstance(data_frame, pd.Series) or isinstance(data_frame, pd2.Series):
         data_frame = pd.DataFrame(data_frame)
-    elif not isinstance(data_frame, pd.DataFrame):
+    elif not (isinstance(data_frame, pd.DataFrame) or isinstance(data_frame, pd2.DataFrame)):
         raise TypeError(
             "data_frame must be DataFrame or Series, not %s" % type(data_frame)
         )
@@ -573,7 +574,7 @@ class QgridWidget(widgets.DOMWidget):
     _view_module_version = Unicode('^1.1.3').tag(sync=True)
     _model_module_version = Unicode('^1.1.3').tag(sync=True)
 
-    _df = Instance(pd.DataFrame)
+    _df = Union([Instance(pd.DataFrame), Instance(pd2.DataFrame)])
     _df_json = Unicode('', sync=True)
     _primary_key = List()
     _primary_key_display = Dict({})
@@ -589,7 +590,7 @@ class QgridWidget(widgets.DOMWidget):
     _sort_helper_columns = Dict({})
     _initialized = Bool(False)
     _ignore_df_changed = Bool(False)
-    _unfiltered_df = Instance(pd.DataFrame)
+    _unfiltered_df = Union([Instance(pd.DataFrame), Instance(pd2.DataFrame)])
     _index_col_name = Unicode('qgrid_unfiltered_index', sync=True)
     _sort_col_suffix = Unicode('_qgrid_sort_column')
     _multi_index = Bool(False, sync=True)
@@ -605,7 +606,7 @@ class QgridWidget(widgets.DOMWidget):
     _sort_ascending = Bool(True, sync=True)
     _handlers = Instance(_EventHandlers)
 
-    df = Instance(pd.DataFrame)
+    df = Union([Instance(pd.DataFrame), Instance(pd2.DataFrame)])
     precision = Integer(6, sync=True)
     grid_options = Dict(sync=True)
     column_options = Dict({})
@@ -866,6 +867,7 @@ class QgridWidget(widgets.DOMWidget):
 
         self._df_range = new_df_range
 
+        # indexing on empty modin dataframe throws exception as of 0.8.1.1
         if len(df) > 0:
             df = df.iloc[from_index:to_index]
 
@@ -879,7 +881,7 @@ class QgridWidget(widgets.DOMWidget):
             def should_be_stringified(col_series):
                 return col_series.dtype == np.dtype('O') or \
                        hasattr(col_series, 'cat') or \
-                       isinstance(col_series, pd.PeriodIndex)
+                       isinstance(col_series, pd.PeriodIndex) or isinstance(col_series, pd2.PeriodIndex)
 
             if type(df.index) == pd.MultiIndex:
                 self._multi_index = True
