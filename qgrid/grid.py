@@ -1165,13 +1165,16 @@ class QgridWidget(widgets.DOMWidget):
         col_series = self._get_col_series_from_df(col_name, df_for_unique)
         if 'is_index' in col_info:
             col_series = pd.Series(col_series)
-
+        # breakpoint()
         if col_info['type'] in ['integer', 'number']:
             if 'filter_info' not in col_info or \
                     (col_info['filter_info']['min'] is None and
                      col_info['filter_info']['max'] is None):
-                col_info['slider_max'] = max(col_series)
-                col_info['slider_min'] = min(col_series)
+                # TODO: Handle all NaN columns
+                if all(np.isnan(col_series)):
+                    print("ERROR: All values in column are NaN, cannot filter.")
+                col_info['slider_max'] = np.nanmax(col_series)
+                col_info['slider_min'] = np.nanmin(col_series)
                 self._columns[col_name] = col_info
             self.send({
                 'type': 'column_min_max_updated',
