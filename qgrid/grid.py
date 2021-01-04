@@ -637,6 +637,7 @@ class QgridWidget(widgets.DOMWidget):
             self._update_df()
 
         self._history = []
+        self._qgrid_msgs = []
 
     def _grid_options_default(self):
         return defaults.grid_options
@@ -1476,6 +1477,7 @@ class QgridWidget(widgets.DOMWidget):
 
     def _handle_qgrid_msg(self, widget, content, buffers=None):
         try:
+            self._qgrid_msgs.append(content)
             self._handle_qgrid_msg_helper(content)
         except Exception as e:
             self.log.error(e)
