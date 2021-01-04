@@ -108,6 +108,7 @@ class _DefaultSettings(object):
 class _EventHandlers(object):
 
     def __init__(self):
+        self._events = []
         self._listeners = {}
 
     def on(self, names, handler):
@@ -127,10 +128,14 @@ class _EventHandlers(object):
                 pass
 
     def notify_listeners(self, event, qgrid_widget):
+        self._events.append(event)
         event_listeners = self._listeners.get(event['name'], [])
         all_listeners = self._listeners.get(All, [])
         for c in chain(event_listeners, all_listeners):
             c(event, qgrid_widget)
+
+    def get_events(self):
+        return self._events
 
 
 defaults = _DefaultSettings()
@@ -1857,6 +1862,9 @@ class QgridWidget(widgets.DOMWidget):
             'option_name': option_name,
             'option_value': option_value
         })
+
+    def get_events(self):
+        return self._handlers.get_events()
 
 
 # Alias for legacy support, since we changed the capitalization
