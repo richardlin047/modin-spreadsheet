@@ -1914,6 +1914,17 @@ class QgridWidget(widgets.DOMWidget):
     def get_events(self):
         return self._handlers.get_events()
 
+    def apply_history(self, df):
+        # TODO: Check that df has matching index, columns, etc.
+        unfiltered_df = df.copy()
+        df = df.copy()
+        # Concatenate code statements
+        all_commands = "; ".join(self.get_history())
+        _locals = locals()
+        # Replay transformations on input df
+        exec(all_commands, globals(), _locals)
+        return _locals["df"]
+
 
 # Alias for legacy support, since we changed the capitalization
 QGridWidget = QgridWidget
