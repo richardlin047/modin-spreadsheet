@@ -636,6 +636,8 @@ class QgridWidget(widgets.DOMWidget):
         if self.df is not None:
             self._update_df()
 
+        self._history = []
+
     def _grid_options_default(self):
         return defaults.grid_options
 
@@ -1097,6 +1099,8 @@ class QgridWidget(widgets.DOMWidget):
                         ascending=self._sort_ascending,
                         inplace=True
                     )
+                    # Record sort index
+                    self._history.append(f"df.sort_index(ascending={self._sort_ascending},inplace=True)")
                 else:
                     level_index = self._primary_key.index(self._sort_field)
                     self._df.sort_index(
@@ -1104,6 +1108,8 @@ class QgridWidget(widgets.DOMWidget):
                         ascending=self._sort_ascending,
                         inplace=True
                     )
+                    # Record sort index
+                    self._history.append(f"df.sort_index(level=level_index,ascending={self._sort_ascending},inplace=True)")
                     if level_index > 0:
                         self._disable_grouping = True
             else:
@@ -1112,6 +1118,8 @@ class QgridWidget(widgets.DOMWidget):
                     ascending=self._sort_ascending,
                     inplace=True
                 )
+                # Record sort column
+                self._history.append(f"df.sort_values('{self._sort_field}',ascending={self._sort_ascending},inplace=True)")
                 self._disable_grouping = True
         except TypeError:
             self.log.info('TypeError occurred, assuming mixed data type '
@@ -1123,6 +1131,14 @@ class QgridWidget(widgets.DOMWidget):
                 self._initialize_sort_column(self._sort_field),
                 ascending=self._sort_ascending,
                 inplace=True
+            )
+            # Record mixed type column sort
+            # Create stringified helper column to sort on
+            helper_col = self._sort_field + self._sort_col_suffix
+            self._history.append(
+                (f"df['{helper_col}'] = df['{self._sort_field}'].map(str); "
+                 f"df.sort_values('{helper_col}',ascending={self._sort_ascending},inplace=True); "
+                 f"df.drop(columns='{helper_col}', inplace=True)")
             )
 
     # Add a new column which is a stringified version of the column whose name
@@ -1364,22 +1380,30 @@ class QgridWidget(widgets.DOMWidget):
         if filter_info['type'] == 'slider':
             if filter_info['min'] is not None:
                 conditions.append(col_series >= filter_info['min'])
+                self._filter_conditions.append(f"unfiltered_df['{col_name}'] >= {filter_info['min']}")
             if filter_info['max'] is not None:
                 conditions.append(col_series <= filter_info['max'])
+                self._filter_conditions.append(f"unfiltered_df['{col_name}'] <= {filter_info['max']}")
         elif filter_info['type'] == 'date':
             if filter_info['min'] is not None:
                 conditions.append(
                     col_series >= pd.to_datetime(filter_info['min'], unit='ms')
                 )
+                self._filter_conditions.append(
+                    f"unfiltered_df['{col_name}'] >= pd.to_datetime({filter_info['min']}, unit='ms'")
             if filter_info['max'] is not None:
                 conditions.append(
                     col_series <= pd.to_datetime(filter_info['max'], unit='ms')
                 )
+                self._filter_conditions.append(
+                    f"unfiltered_df['{col_name}'] <= pd.to_datetime({filter_info['max']}, unit='ms'")
         elif filter_info['type'] == 'boolean':
             if filter_info['selected'] is not None:
                 conditions.append(
                     col_series == filter_info['selected']
                 )
+                self._filter_conditions.append(
+                    f"unfiltered_df['{col_name}'] == {filter_info['selected']}")
         elif filter_info['type'] == 'text':
             if col_name not in self._filter_tables:
                 return
@@ -1395,11 +1419,15 @@ class QgridWidget(widgets.DOMWidget):
                         map(get_value_from_filter_table, excluded_indices)
                     )
                     conditions.append(~col_series.isin(excluded_values))
+                    self._filter_conditions.append(
+                        f"~unfiltered_df['{col_name}'].isin({excluded_values})")
             elif selected_indices is not None and len(selected_indices) > 0:
                 selected_values = list(
                     map(get_value_from_filter_table, selected_indices)
                 )
                 conditions.append(col_series.isin(selected_values))
+                self._filter_conditions.append(
+                    f"unfiltered_df['{col_name}'].isin({selected_values})")
 
     def _handle_change_filter(self, content):
         col_name = content['field']
@@ -1409,6 +1437,7 @@ class QgridWidget(widgets.DOMWidget):
         columns[col_name] = col_info
 
         conditions = []
+        self._filter_conditions = []
         for key, value in columns.items():
             if 'filter_info' in value:
                 self._append_condition_for_column(
@@ -1420,12 +1449,20 @@ class QgridWidget(widgets.DOMWidget):
         self._ignore_df_changed = True
         if len(conditions) == 0:
             self._df = self._unfiltered_df.copy()
+            # Record reset filter
+            # Other filters and sorts are reapplied after
+            self._history.append(f"df = unfiltered_df.copy()")
         else:
             combined_condition = conditions[0]
             for c in conditions[1:]:
                 combined_condition = combined_condition & c
 
             self._df = self._unfiltered_df[combined_condition].copy()
+            # Record filter
+            record_combined_condition = "&".join(["(" + c + ")" for c in self._filter_conditions])
+            self._history.append(f"df = unfiltered_df[{record_combined_condition}].copy()")
+            # Reset filter conditions
+            self._filter_conditions = []
 
         if len(self._df) < self._viewport_range[0]:
             viewport_size = self._viewport_range[1] - self._viewport_range[0]
@@ -1464,6 +1501,8 @@ class QgridWidget(widgets.DOMWidget):
                         val_to_set = val_to_set.tz_convert(tz=old_value.tz)
 
                 self._df.loc[location] = val_to_set
+                # Record cell edit
+                self._history.append(f"df.loc[{location}]={val_to_set}")
 
                 query = self._unfiltered_df[self._index_col_name] == \
                     content['unfiltered_index']
@@ -1669,6 +1708,8 @@ class QgridWidget(widgets.DOMWidget):
         last.name += 1
         last[self._index_col_name] = last.name
         df.loc[last.name] = last.values
+        # Record row add
+        self._history.append(f"last = df.loc[max(df.index)].copy(); df.loc[last.name+1] = last.values")
         self._unfiltered_df.loc[last.name] = last.values
         self._update_table(triggered_by='add_row',
                            scroll_to_row=df.index.get_loc(last.name))
@@ -1789,6 +1830,8 @@ class QgridWidget(widgets.DOMWidget):
                 list(map(lambda x: self._df.iloc[x].name, self._selected_rows))
 
         self._df.drop(selected_names, inplace=True)
+        # Record remove rows
+        self._history.append(f"df.drop({selected_names}, inplace=True)")
         self._unfiltered_df.drop(selected_names, inplace=True)
         self._selected_rows = []
         self._update_table(triggered_by='remove_row')
@@ -1862,6 +1905,9 @@ class QgridWidget(widgets.DOMWidget):
             'option_name': option_name,
             'option_value': option_value
         })
+
+    def get_history(self):
+        return self._history
 
     def get_events(self):
         return self._handlers.get_events()
