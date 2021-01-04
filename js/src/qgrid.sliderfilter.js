@@ -68,6 +68,11 @@ class SliderFilter extends filter_base.FilterBase {
 
   set_value(min_val, max_val) {
     var min_val_rounded, max_val_rounded;
+    // TODO: Fix workaround
+    if (isNaN(min_val) && isNaN(max_val)) {
+      return;
+    }
+
     if (this.column_type == 'integer') {
       min_val_rounded = min_val.toFixed(0);
       max_val_rounded = max_val.toFixed(0);
@@ -119,7 +124,8 @@ class SliderFilter extends filter_base.FilterBase {
       this.filter_value_min = null;
       this.filter_value_max = null;
     }
-    this.has_multiple_values = this.min_value != this.max_value;
+    // TODO: Fix for all NaN column. Not sure if it works.
+    this.has_multiple_values = this.min_value != this.max_value || (isNaN(this.min_value) && isNaN(this.max_value));
 
     this.show_filter();
 
