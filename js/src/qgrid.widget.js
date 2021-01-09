@@ -64,6 +64,13 @@ class QgridView extends widgets.DOMWidgetView {
     }
     this.initialize_toolbar();
     this.initialize_slick_grid();
+    this.initialize_history_cell();
+  }
+
+  initialize_history_cell() {
+    this.send({
+      'type': 'initialize_history',
+    });
   }
 
   initialize_toolbar() {
@@ -789,6 +796,25 @@ class QgridView extends widgets.DOMWidgetView {
     } else if (msg.col_info) {
       var filter = this.filters[msg.col_info.name];
       filter.handle_msg(msg);
+    } else if (msg.type == 'initialize_history') {
+      var cells = Jupyter.notebook.get_cells();
+      for (let cell of cells) {
+        // Check if there is an existing history cell
+        if (msg.metadata_tag in cell.metadata) {
+          return;
+        }
+      }
+      // Create new cell if no history cell
+      var cell = Jupyter.notebook.insert_cell_above('code');
+      cell.metadata[msg.metadata_tag] = true;
+    } else if (msg.type == 'update_history') {
+      var cells = Jupyter.notebook.get_cells();
+      for (let cell of cells) {
+        // Update history cell with current history
+        if (msg.metadata_tag in cell.metadata) {
+          cell.set_text(msg.history);
+        }
+      }
     }
   }
 
