@@ -110,6 +110,12 @@ class QgridView extends widgets.DOMWidgetView {
       text: 'Remove Row'
     });
 
+    append_btn({
+      loading_text: 'Clearing...',
+      event_type: 'clear_history',
+      text: 'Clear History'
+    });
+
     this.buttons = this.toolbar.find('.btn');
     this.buttons.attr('title',
         'Not available while there is an active filter');
@@ -817,6 +823,8 @@ class QgridView extends widgets.DOMWidgetView {
           cell.set_text(msg.history);
         }
       }
+      // Reset clear history button in case clicked
+      this.reset_in_progress_button();
     }
   }
 

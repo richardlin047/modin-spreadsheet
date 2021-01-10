@@ -1635,6 +1635,8 @@ class QgridWidget(widgets.DOMWidget):
                 'metadata_tag': self._history_metadata_tag
             })
             self._update_history_cell()
+        elif content['type'] == 'clear_history':
+            self.clear_history(from_api=False)
 
     def _notify_listeners(self, event):
         # notify listeners at the module level
@@ -1947,6 +1949,14 @@ class QgridWidget(widgets.DOMWidget):
     def get_history(self):
         return self._history
 
+    def clear_history(self, from_api=True):
+        self._history = []
+        source = 'api' if from_api else 'gui'
+            self._notify_listeners({
+                'name': 'history_cleared',
+            'source': source
+            })
+        self._update_history_cell()
     def get_events(self):
         return self._handlers.get_events()
 
