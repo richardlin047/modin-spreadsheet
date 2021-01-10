@@ -1676,6 +1676,7 @@ class QgridWidget(widgets.DOMWidget):
         """
         return self._selected_rows
 
+    # TODO: Duplicate last row rather than max index when filtered
     def add_row(self, row=None):
         """
         Append a row at the end of the DataFrame.  Values for the new row

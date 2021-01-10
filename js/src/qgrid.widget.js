@@ -691,10 +691,12 @@ class QgridView extends widgets.DOMWidgetView {
       }
     } else if (msg.type == 'update_data_view') {
       if (this.buttons) {
-        if (this.has_active_filter()) {
-          this.buttons.addClass('disabled');
-          this.buttons.tooltip('enable');
-        } else if (this.buttons.hasClass('disabled')) {
+        // Ignore active filter
+        // TODO: Clean up after confirming no unwanted side-effects
+      //   if (this.has_active_filter()) {
+      //     this.buttons.addClass('disabled');
+      //     this.buttons.tooltip('enable');
+        if (this.buttons.hasClass('disabled')) {
           this.buttons.removeClass('disabled');
           this.buttons.tooltip('disable');
         }
@@ -753,8 +755,8 @@ class QgridView extends widgets.DOMWidgetView {
 
         this.slick_grid.render();
 
-        if ((msg.triggered_by == 'add_row' ||
-            msg.triggered_by == 'remove_row') && !this.has_active_filter()) {
+        if (msg.triggered_by == 'add_row' ||
+            msg.triggered_by == 'remove_row') {
           this.update_size();
         }
         this.update_timeout = null;
