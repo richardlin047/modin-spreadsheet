@@ -1103,7 +1103,8 @@ class QgridWidget(widgets.DOMWidget):
                         inplace=True
                     )
                     # Record sort index
-                    self._record_transformation(f"df.sort_index(ascending={self._sort_ascending},inplace=True)")
+                    self._record_transformation(f"# Sort index\n"
+                                                f"df.sort_index(ascending={self._sort_ascending}, inplace=True)")
                 else:
                     level_index = self._primary_key.index(self._sort_field)
                     self._df.sort_index(
@@ -1112,7 +1113,10 @@ class QgridWidget(widgets.DOMWidget):
                         inplace=True
                     )
                     # Record sort index
-                    self._record_transformation(f"df.sort_index(level=level_index,ascending={self._sort_ascending},inplace=True)")
+                    # TODO: Fix level=level_index
+                    self._record_transformation(f"# Sort index\n"
+                                                f"df.sort_index(level=level_index, ascending={self._sort_ascending}, "
+                                                f"inplace=True)")
                     if level_index > 0:
                         self._disable_grouping = True
             else:
@@ -1122,7 +1126,9 @@ class QgridWidget(widgets.DOMWidget):
                     inplace=True
                 )
                 # Record sort column
-                self._record_transformation(f"df.sort_values('{self._sort_field}',ascending={self._sort_ascending},inplace=True)")
+                self._record_transformation(f"# Sort column\n"
+                                            f"df.sort_values('{self._sort_field}', ascending={self._sort_ascending}, "
+                                            f"inplace=True)")
                 self._disable_grouping = True
         except TypeError:
             self.log.info('TypeError occurred, assuming mixed data type '
@@ -1139,8 +1145,9 @@ class QgridWidget(widgets.DOMWidget):
             # Create stringified helper column to sort on
             helper_col = self._sort_field + self._sort_col_suffix
             self._record_transformation(
-                (f"df['{helper_col}'] = df['{self._sort_field}'].map(str); "
-                 f"df.sort_values('{helper_col}',ascending={self._sort_ascending},inplace=True); "
+                (f"#Sort mixed type column\n"
+                 f"df['{helper_col}'] = df['{self._sort_field}'].map(str)\n"
+                 f"df.sort_values('{helper_col}', ascending={self._sort_ascending}, inplace=True)\n"
                  f"df.drop(columns='{helper_col}', inplace=True)")
             )
 
@@ -1454,7 +1461,8 @@ class QgridWidget(widgets.DOMWidget):
             self._df = self._unfiltered_df.copy()
             # Record reset filter
             # Other filters and sorts are reapplied after
-            self._record_transformation(f"df = unfiltered_df.copy()")
+            self._record_transformation(f"# Reset filter\n"
+                                        f"df = unfiltered_df.copy()")
         else:
             combined_condition = conditions[0]
             for c in conditions[1:]:
@@ -1463,7 +1471,8 @@ class QgridWidget(widgets.DOMWidget):
             self._df = self._unfiltered_df[combined_condition].copy()
             # Record filter
             record_combined_condition = "&".join(["(" + c + ")" for c in self._filter_conditions])
-            self._record_transformation(f"df = unfiltered_df[{record_combined_condition}].copy()")
+            self._record_transformation(f"# Filter columns\n"
+                                        f"df = unfiltered_df[{record_combined_condition}].copy()")
             # Reset filter conditions
             self._filter_conditions = []
 
@@ -1506,7 +1515,8 @@ class QgridWidget(widgets.DOMWidget):
 
                 self._df.loc[location] = val_to_set
                 # Record cell edit
-                self._record_transformation(f"df.loc[{location}]={val_to_set}")
+                self._record_transformation(f"# Edit cell\n"
+                                            f"df.loc[{location}]={val_to_set}")
 
                 query = self._unfiltered_df[self._index_col_name] == \
                     content['unfiltered_index']
@@ -1720,7 +1730,9 @@ class QgridWidget(widgets.DOMWidget):
         last[self._index_col_name] = last.name
         df.loc[last.name] = last.values
         # Record row add
-        self._record_transformation(f"last = df.loc[max(df.index)].copy(); df.loc[last.name+1] = last.values")
+        self._record_transformation(f"# Add row\n"
+                                    f"last = df.loc[max(df.index)].copy()\n"
+                                    f"df.loc[last.name+1] = last.values")
         self._unfiltered_df.loc[last.name] = last.values
         self._update_table(triggered_by='add_row',
                            scroll_to_row=df.index.get_loc(last.name))
@@ -1842,7 +1854,8 @@ class QgridWidget(widgets.DOMWidget):
 
         self._df.drop(selected_names, inplace=True)
         # Record remove rows
-        self._record_transformation(f"df.drop({selected_names}, inplace=True)")
+        self._record_transformation(f"# Remove rows\n"
+                                    f"df.drop({selected_names}, inplace=True)")
         self._unfiltered_df.drop(selected_names, inplace=True)
         self._selected_rows = []
         self._update_table(triggered_by='remove_row')
