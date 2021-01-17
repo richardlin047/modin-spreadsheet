@@ -362,12 +362,15 @@ class TextFilter extends filter_base.FilterBase {
     this.row_selection_model.setSelectedRows([]);
     this.filter_list = null;
     this.send_filter_changed();
-    var msg = {
-      'type': 'show_filter_dropdown',
-      'field': this.field,
-      'search_val': this.search_string
-    };
-    this.widget_model.send(msg);
+    // Refreshing filter dropdown is necessary for retrieving new search results
+    if (this.filter_elem) {
+      var msg = {
+        'type': 'show_filter_dropdown',
+        'field': this.field,
+        'search_val': this.search_string
+      };
+      this.widget_model.send(msg);
+    }
     this.ignore_selection_changed = false;
   }
 

@@ -117,7 +117,14 @@ class QgridView extends widgets.DOMWidgetView {
       text: 'Clear History'
     });
 
+    append_btn({
+      loading_text: 'Resetting...',
+      text: 'Reset Filters',
+      handler_function: 'reset_all_filters'
+    });
+
     this.buttons = this.toolbar.find('.btn');
+    // TODO: Remove code regarding disabled buttons on active filter
     this.buttons.attr('title',
         'Not available while there is an active filter');
     this.buttons.tooltip();
@@ -157,6 +164,17 @@ class QgridView extends widgets.DOMWidgetView {
     this.bind_toolbar_events();
   }
 
+  reset_all_filters() {
+    this.send({'type': 'reset_filters_start'})
+    for (let i=0; i<this.filter_list.length; i++) {
+      let filter = this.filter_list[i];
+      if (filter.is_active()) {
+        filter.reset_filter()
+      }
+    }
+    this.send({'type': 'reset_filters_end'})
+  }
+
   bind_toolbar_events() {
     this.buttons.off('click');
     this.buttons.click((e) => {
@@ -174,7 +192,7 @@ class QgridView extends widgets.DOMWidgetView {
       clicked.text(clicked.attr('data-loading-text'));
       clicked.addClass('disabled');
       if (clicked.attr('data-event-type')) {
-      this.send({'type': clicked.attr('data-event-type')});
+        this.send({'type': clicked.attr('data-event-type')});
       }
       if (clicked.attr('data-handler-function')) {
         this[clicked.attr('data-handler-function')]();

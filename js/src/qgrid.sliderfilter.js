@@ -103,7 +103,9 @@ class SliderFilter extends filter_base.FilterBase {
         values: [this.min_value, this.max_value],
         step: step
       });
-      this.set_value(this.min_value, this.max_value);
+      if (this.filter_elem) {
+        this.set_value(this.min_value, this.max_value);
+      }
     }
     this.send_filter_changed();
   }
@@ -113,6 +115,7 @@ class SliderFilter extends filter_base.FilterBase {
   }
 
   update_min_max(col_info, has_active_filter) {
+    // Min and max values of the unfiltered column
     this.min_value = col_info.slider_min;
     this.max_value = col_info.slider_max;
 

@@ -640,6 +640,7 @@ class QgridWidget(widgets.DOMWidget):
         self._history = []
         self._qgrid_msgs = []
         self._history_metadata_tag = "qgrid" + str(uuid4())
+        self._resetting_filters = False
 
     def _grid_options_default(self):
         return defaults.grid_options
@@ -1482,8 +1483,9 @@ class QgridWidget(widgets.DOMWidget):
             self._viewport_range = (range_top, range_top + viewport_size)
 
         self._sorted_column_cache = {}
-        self._update_sort()
-        self._update_table(triggered_by='change_filter')
+        if not self._resetting_filters:
+            self._update_sort()
+            self._update_table(triggered_by='change_filter')
         self._ignore_df_changed = False
 
     def _handle_qgrid_msg(self, widget, content, buffers=None):
@@ -1627,6 +1629,18 @@ class QgridWidget(widgets.DOMWidget):
             self._notify_listeners({
                 'name': 'filter_changed',
                 'column': content['field']
+            })
+        elif content['type'] == 'reset_filters_start':
+            self._resetting_filters = True
+        elif content['type'] == 'reset_filters_end':
+            self._resetting_filters = False
+            self._update_sort()
+            self._update_table(triggered_by='reset_filters')
+            self._record_transformation(('# Reset all filters\n'
+                                         'df = unfiltered_df.copy()'))
+            self._notify_listeners({
+                'name': 'filters_reset',
+                'source': 'gui'
             })
         elif content['type'] == 'initialize_history':
             # Send metadata tag to frontend
@@ -1934,6 +1948,8 @@ class QgridWidget(widgets.DOMWidget):
         })
 
     def _record_transformation(self, code):
+        if self._resetting_filters:
+            return
         self._history.append(code)
         self._update_history_cell()
 
@@ -1952,11 +1968,12 @@ class QgridWidget(widgets.DOMWidget):
     def clear_history(self, from_api=True):
         self._history = []
         source = 'api' if from_api else 'gui'
-            self._notify_listeners({
-                'name': 'history_cleared',
+        self._notify_listeners({
+            'name': 'history_cleared',
             'source': source
-            })
+        })
         self._update_history_cell()
+
     def get_events(self):
         return self._handlers.get_events()
 
