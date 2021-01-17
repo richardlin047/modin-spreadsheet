@@ -91,8 +91,9 @@ class QgridView extends widgets.DOMWidgetView {
         <button
         class='btn btn-default'
         data-loading-text='${btn_info.loading_text}'
-        data-event-type='${btn_info.event_type}'
-        data-btn-text='${btn_info.text}'>
+        data-btn-text='${btn_info.text}'
+        data-event-type='${btn_info.event_type ? btn_info.event_type : ''}'
+        data-handler-function='${btn_info.handler_function ? btn_info.handler_function : ''}'>
             ${btn_info.text}
         </button>
       `).appendTo(this.toolbar);
@@ -172,7 +173,12 @@ class QgridView extends widgets.DOMWidgetView {
       this.in_progress_btn = clicked;
       clicked.text(clicked.attr('data-loading-text'));
       clicked.addClass('disabled');
+      if (clicked.attr('data-event-type')) {
       this.send({'type': clicked.attr('data-event-type')});
+      }
+      if (clicked.attr('data-handler-function')) {
+        this[clicked.attr('data-handler-function')]();
+      }
     });
     if (!this.full_screen_btn) {
       return;
