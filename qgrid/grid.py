@@ -1765,13 +1765,13 @@ class QgridWidget(widgets.DOMWidget):
         last.name += 1
         last[self._index_col_name] = last.name
         df.loc[last.name] = last.values
+        self._unfiltered_df.loc[last.name] = last.values
+        self._update_table(triggered_by='add_row',
+                           scroll_to_row=df.index.get_loc(last.name))
         # Record row add
         self._record_transformation(f"# Add row\n"
                                     f"last = df.loc[max(df.index)].copy()\n"
                                     f"df.loc[last.name+1] = last.values")
-        self._unfiltered_df.loc[last.name] = last.values
-        self._update_table(triggered_by='add_row',
-                           scroll_to_row=df.index.get_loc(last.name))
         return last.name
 
     def _add_row(self, row):
@@ -1889,12 +1889,12 @@ class QgridWidget(widgets.DOMWidget):
                 list(map(lambda x: self._df.iloc[x].name, self._selected_rows))
 
         self._df.drop(selected_names, inplace=True)
-        # Record remove rows
-        self._record_transformation(f"# Remove rows\n"
-                                    f"df.drop({selected_names}, inplace=True)")
         self._unfiltered_df.drop(selected_names, inplace=True)
         self._selected_rows = []
         self._update_table(triggered_by='remove_row')
+        # Record remove rows
+        self._record_transformation(f"# Remove rows\n"
+                                    f"df.drop({selected_names}, inplace=True)")
         return selected_names
 
     def change_selection(self, rows=[]):
