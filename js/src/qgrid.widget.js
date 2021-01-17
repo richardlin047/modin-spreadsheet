@@ -123,6 +123,12 @@ class QgridView extends widgets.DOMWidgetView {
       handler_function: 'reset_all_filters'
     });
 
+    append_btn({
+      loading_text: 'Resetting...',
+      text: 'Reset Sort',
+      event_type: 'reset_sort'
+    });
+
     this.buttons = this.toolbar.find('.btn');
     // TODO: Remove code regarding disabled buttons on active filter
     this.buttons.attr('title',
@@ -758,6 +764,12 @@ class QgridView extends widgets.DOMWidgetView {
           var fa_class = asc ? 'fa-sort-asc' : 'fa-sort-desc';
           this.sort_indicator.addClass(fa_class);
           this.sort_in_progress = false;
+        }
+
+        if (msg.triggered_by == 'reset_sort' && this.sort_indicator) {
+          this.sort_indicator.removeClass(
+              'fa fa-spinner fa-spin fa-sort-asc fa-sort-desc'
+          );
         }
 
         let top_row = null;
