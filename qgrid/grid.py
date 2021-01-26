@@ -1619,24 +1619,7 @@ class QgridWidget(widgets.DOMWidget):
                 }
             })
         elif content['type'] == 'reset_sort':
-            # Reset sort internal state to default
-            self._sort_field = None
-            self._sort_ascending = True
-            # Sort by index to reset sort
-            self._df.sort_index(
-                ascending=True,
-                inplace=True
-            )
-            # Update data view
-            self._update_table(triggered_by='reset_sort')
-            # Record sort index
-            # After update_table to prevent resetting in progress button prematurely
-            self._record_transformation(f"# Reset sort\n"
-                                        f"df.sort_index(ascending=True, inplace=True)")
-            self._notify_listeners({
-                'name': 'sort_reset',
-                'source': 'gui'
-            })
+            self.reset_sort(from_api=False)
         elif content['type'] == 'show_filter_dropdown':
             self._handle_show_filter_dropdown(content)
             self._notify_listeners({
@@ -2006,6 +1989,27 @@ class QgridWidget(widgets.DOMWidget):
         # Replay transformations on input df
         exec(all_commands, globals(), _locals)
         return _locals["df"]
+
+    def reset_sort(self, from_api=True):
+        # Reset sort internal state to default
+        self._sort_field = None
+        self._sort_ascending = True
+        # Sort by index to reset sort
+        self._df.sort_index(
+            ascending=True,
+            inplace=True
+        )
+        # Update data view
+        self._update_table(triggered_by='reset_sort')
+        # Record sort index
+        # After update_table to prevent resetting in progress button prematurely
+        self._record_transformation(f"# Reset sort\n"
+                                    f"df.sort_index(ascending=True, inplace=True)")
+        source = 'api' if from_api else 'gui'
+        self._notify_listeners({
+            'name': 'sort_reset',
+            'source': source
+        })
 
 
 # Alias for legacy support, since we changed the capitalization
