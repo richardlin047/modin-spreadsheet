@@ -861,6 +861,8 @@ class QgridView extends widgets.DOMWidgetView {
       }
       // Reset clear history button in case clicked
       this.reset_in_progress_button();
+    } else if (msg.type == 'reset_filters') {
+      this.reset_all_filters()
     }
   }
 

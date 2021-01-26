@@ -1641,8 +1641,7 @@ class QgridWidget(widgets.DOMWidget):
             self._record_transformation(('# Reset all filters\n'
                                          'df = unfiltered_df.copy()'))
             self._notify_listeners({
-                'name': 'filters_reset',
-                'source': 'gui'
+                'name': 'filters_reset'
             })
         elif content['type'] == 'initialize_history':
             # Send metadata tag to frontend
@@ -2009,6 +2008,11 @@ class QgridWidget(widgets.DOMWidget):
         self._notify_listeners({
             'name': 'sort_reset',
             'source': source
+        })
+
+    def reset_filters(self):
+        self.send({
+            'type': 'reset_filters'
         })
 
 
