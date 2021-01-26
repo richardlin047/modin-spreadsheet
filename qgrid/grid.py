@@ -1636,10 +1636,11 @@ class QgridWidget(widgets.DOMWidget):
             self._resetting_filters = True
         elif content['type'] == 'reset_filters_end':
             self._resetting_filters = False
-            self._update_sort()
-            self._update_table(triggered_by='reset_filters')
+            # Record reset filters before updating sort
             self._record_transformation(('# Reset all filters\n'
                                          'df = unfiltered_df.copy()'))
+            self._update_sort()
+            self._update_table(triggered_by='reset_filters')
             self._notify_listeners({
                 'name': 'filters_reset'
             })
