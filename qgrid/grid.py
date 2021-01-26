@@ -1197,7 +1197,7 @@ class QgridWidget(widgets.DOMWidget):
         col_series = self._get_col_series_from_df(col_name, df_for_unique)
         if 'is_index' in col_info:
             col_series = pd.Series(col_series)
-        # breakpoint()
+        # Calculate new min and max if no filter applied
         if col_info['type'] in ['integer', 'number']:
             if 'filter_info' not in col_info or \
                     (col_info['filter_info']['min'] is None and
