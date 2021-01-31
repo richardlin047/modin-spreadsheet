@@ -71,12 +71,13 @@ class _DefaultSettings(object):
         }
         self._show_toolbar = False
         self._precision = None  # Defer to pandas.get_option
+        self._show_history = True
 
     def set_grid_option(self, optname, optvalue):
         self._grid_options[optname] = optvalue
 
     def set_defaults(self, show_toolbar=None, precision=None,
-                     grid_options=None, column_options=None):
+                     grid_options=None, column_options=None, show_history=None):
         if show_toolbar is not None:
             self._show_toolbar = show_toolbar
         if precision is not None:
@@ -85,6 +86,8 @@ class _DefaultSettings(object):
             self._grid_options = grid_options
         if column_options is not None:
             self._column_options = column_options
+        if show_history is not None:
+            self._show_history = show_history
 
     @property
     def show_toolbar(self):
@@ -103,6 +106,10 @@ class _DefaultSettings(object):
     @property
     def column_options(self):
         return self._column_options
+    
+    @property
+    def show_history(self):
+        return self._show_history
 
 
 class _EventHandlers(object):
@@ -146,7 +153,8 @@ HISTORY_PREFIX = "# ---- qgrid transformation history ----\n"
 def set_defaults(show_toolbar=None,
                  precision=None,
                  grid_options=None,
-                 column_options=None):
+                 column_options=None,
+                 show_history=None):
     """
     Set the default qgrid options.  The options that you can set here are the
     same ones that you can pass into ``QgridWidget`` constructor, with the
@@ -171,7 +179,8 @@ def set_defaults(show_toolbar=None,
     defaults.set_defaults(show_toolbar=show_toolbar,
                           precision=precision,
                           grid_options=grid_options,
-                          column_options=column_options)
+                          column_options=column_options,
+                          show_history=show_history)
 
 
 def on(names, handler):
@@ -336,7 +345,8 @@ def show_grid(data_frame,
               grid_options=None,
               column_options=None,
               column_definitions=None,
-              row_edit_callback=None):
+              row_edit_callback=None,
+              show_history=None):
     """
     Renders a DataFrame or Series as an interactive qgrid, represented by
     an instance of the ``QgridWidget`` class.  The ``QgridWidget`` instance
@@ -484,6 +494,8 @@ def show_grid(data_frame,
         show_toolbar = defaults.show_toolbar
     if precision is None:
         precision = defaults.precision
+    if show_history is None:
+        show_history = defaults.show_history
     if not isinstance(precision, Integral):
         raise TypeError("precision must be int, not %s" % type(precision))
     if column_options is None:
@@ -519,7 +531,8 @@ def show_grid(data_frame,
                        column_options=column_options,
                        column_definitions=column_definitions,
                        row_edit_callback=row_edit_callback,
-                       show_toolbar=show_toolbar)
+                       show_toolbar=show_toolbar,
+                       show_history=show_history)
 
 
 PAGE_SIZE = 100
@@ -619,6 +632,7 @@ class QgridWidget(widgets.DOMWidget):
     column_definitions = Dict({})
     row_edit_callback = Instance(FunctionType, sync=False, allow_none=True)
     show_toolbar = Bool(False, sync=True)
+    show_history = Bool(True, sync=True) 
     id = Unicode(sync=True)
 
     def __init__(self, *args, **kwargs):
@@ -650,6 +664,9 @@ class QgridWidget(widgets.DOMWidget):
 
     def _show_toolbar_default(self):
         return defaults.show_toolbar
+    
+    def _show_history_default(self):
+        return defaults.show_history
 
     def on(self, names, handler):
         """
@@ -1661,13 +1678,14 @@ class QgridWidget(widgets.DOMWidget):
                 'name': 'filters_reset',
                 'source': 'gui'
             })
-        elif content['type'] == 'initialize_history':
+        elif content['type'] == 'initialize_history': 
             # Send metadata tag to frontend
-            self.send({
-                'type': 'initialize_history',
-                'metadata_tag': self._history_metadata_tag
-            })
-            self._update_history_cell()
+            if self.show_history:
+                self.send({
+                    'type': 'initialize_history',
+                    'metadata_tag': self._history_metadata_tag
+                })
+                self._update_history_cell()
         elif content['type'] == 'clear_history':
             self.clear_history(from_api=False)
 
@@ -1966,13 +1984,15 @@ class QgridWidget(widgets.DOMWidget):
             'option_value': option_value
         })
 
-    def _record_transformation(self, code):
+    def _record_transformation(self, code): 
         if self._resetting_filters:
             return
         self._history.append(code)
         self._update_history_cell()
 
     def _update_history_cell(self):
+        if not self.show_history:
+            return
         cleaned_history = "\n".join(self._history)
         cell_text = HISTORY_PREFIX + cleaned_history
         self.send({
