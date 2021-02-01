@@ -8,7 +8,7 @@ class DateFilter extends filter_base.FilterBase {
       <div class='date-range-filter grid-filter qgrid-dropdown-menu'>
         <h3 class='qgrid-popover-title'>
           <div class='dropdown-title'>Filter by ${this.field}</div>
-          <i class='fa fa-times icon-remove close-button'/>
+          <i class='fa fa-times icon-remove close-button'></i>
         </h3>
         <div class='dropdown-body'>
           <input class='datepicker ignore start-date'/>
@@ -43,11 +43,13 @@ class DateFilter extends filter_base.FilterBase {
   }
 
   reset_filter() {
-    this.start_date_control.datepicker("setDate", this.min_date);
-    this.end_date_control.datepicker("setDate", this.max_date);
+    if (this.filter_elem) {
+      this.start_date_control.datepicker("setDate", this.min_date);
+      this.end_date_control.datepicker("setDate", this.max_date);
 
-    this.start_date_control.datepicker("option", "maxDate", this.max_date);
-    this.end_date_control.datepicker("option", "minDate", this.min_date);
+      this.start_date_control.datepicker("option", "maxDate", this.max_date);
+      this.end_date_control.datepicker("option", "minDate", this.min_date);
+    }
 
     this.filter_start_date = null;
     this.filter_end_date = null;

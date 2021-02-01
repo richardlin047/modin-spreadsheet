@@ -64,6 +64,13 @@ class QgridView extends widgets.DOMWidgetView {
     }
     this.initialize_toolbar();
     this.initialize_slick_grid();
+    this.initialize_history_cell();
+  }
+
+  initialize_history_cell() {
+    this.send({
+      'type': 'initialize_history',
+    });
   }
 
   initialize_toolbar() {
@@ -84,8 +91,9 @@ class QgridView extends widgets.DOMWidgetView {
         <button
         class='btn btn-default'
         data-loading-text='${btn_info.loading_text}'
-        data-event-type='${btn_info.event_type}'
-        data-btn-text='${btn_info.text}'>
+        data-btn-text='${btn_info.text}'
+        data-event-type='${btn_info.event_type ? btn_info.event_type : ''}'
+        data-handler-function='${btn_info.handler_function ? btn_info.handler_function : ''}'>
             ${btn_info.text}
         </button>
       `).appendTo(this.toolbar);
@@ -103,17 +111,25 @@ class QgridView extends widgets.DOMWidgetView {
       text: 'Remove Row'
     });
 
+    append_btn({
+      loading_text: 'Clearing...',
+      event_type: 'clear_history',
+      text: 'Clear History'
+    });
+
+    append_btn({
+      loading_text: 'Resetting...',
+      text: 'Reset Filters',
+      handler_function: 'reset_all_filters'
+    });
+
+    append_btn({
+      loading_text: 'Resetting...',
+      text: 'Reset Sort',
+      event_type: 'reset_sort'
+    });
+
     this.buttons = this.toolbar.find('.btn');
-    this.buttons.attr('title',
-        'Not available while there is an active filter');
-    this.buttons.tooltip();
-    this.buttons.tooltip({
-      show: {delay: 300}
-    });
-    this.buttons.tooltip({
-      hide: {delay: 100, 'duration': 0}
-    });
-    this.buttons.tooltip('disable');
 
     this.full_screen_btn = null;
     if (dialog) {
@@ -143,6 +159,17 @@ class QgridView extends widgets.DOMWidgetView {
     this.bind_toolbar_events();
   }
 
+  reset_all_filters() {
+    this.send({'type': 'reset_filters_start'})
+    for (let i=0; i<this.filter_list.length; i++) {
+      let filter = this.filter_list[i];
+      if (filter.is_active()) {
+        filter.reset_filter()
+      }
+    }
+    this.send({'type': 'reset_filters_end'})
+  }
+
   bind_toolbar_events() {
     this.buttons.off('click');
     this.buttons.click((e) => {
@@ -159,7 +186,12 @@ class QgridView extends widgets.DOMWidgetView {
       this.in_progress_btn = clicked;
       clicked.text(clicked.attr('data-loading-text'));
       clicked.addClass('disabled');
-      this.send({'type': clicked.attr('data-event-type')});
+      if (clicked.attr('data-event-type')) {
+        this.send({'type': clicked.attr('data-event-type')});
+      }
+      if (clicked.attr('data-handler-function')) {
+        this[clicked.attr('data-handler-function')]();
+      }
     });
     if (!this.full_screen_btn) {
       return;
@@ -684,12 +716,8 @@ class QgridView extends widgets.DOMWidgetView {
       }
     } else if (msg.type == 'update_data_view') {
       if (this.buttons) {
-        if (this.has_active_filter()) {
-          this.buttons.addClass('disabled');
-          this.buttons.tooltip('enable');
-        } else if (this.buttons.hasClass('disabled')) {
+        if (this.buttons.hasClass('disabled')) {
           this.buttons.removeClass('disabled');
-          this.buttons.tooltip('disable');
         }
       }
       if (this.update_timeout) {
@@ -721,6 +749,12 @@ class QgridView extends widgets.DOMWidgetView {
           this.sort_in_progress = false;
         }
 
+        if (msg.triggered_by == 'reset_sort' && this.sort_indicator) {
+          this.sort_indicator.removeClass(
+              'fa fa-spinner fa-spin fa-sort-asc fa-sort-desc'
+          );
+        }
+
         let top_row = null;
         if (msg.triggered_by === 'remove_row') {
           top_row = this.slick_grid.getViewport().top;
@@ -746,8 +780,8 @@ class QgridView extends widgets.DOMWidgetView {
 
         this.slick_grid.render();
 
-        if ((msg.triggered_by == 'add_row' ||
-            msg.triggered_by == 'remove_row') && !this.has_active_filter()) {
+        if (msg.triggered_by == 'add_row' ||
+            msg.triggered_by == 'remove_row') {
           this.update_size();
         }
         this.update_timeout = null;
@@ -789,6 +823,29 @@ class QgridView extends widgets.DOMWidgetView {
     } else if (msg.col_info) {
       var filter = this.filters[msg.col_info.name];
       filter.handle_msg(msg);
+    } else if (msg.type == 'initialize_history') {
+      var cells = Jupyter.notebook.get_cells();
+      for (let cell of cells) {
+        // Check if there is an existing history cell
+        if (msg.metadata_tag in cell.metadata) {
+          return;
+        }
+      }
+      // Create new cell if no history cell
+      var cell = Jupyter.notebook.insert_cell_above('code');
+      cell.metadata[msg.metadata_tag] = true;
+    } else if (msg.type == 'update_history') {
+      var cells = Jupyter.notebook.get_cells();
+      for (let cell of cells) {
+        // Update history cell with current history
+        if (msg.metadata_tag in cell.metadata) {
+          cell.set_text(msg.history);
+        }
+      }
+      // Reset clear history button in case clicked
+      this.reset_in_progress_button();
+    } else if (msg.type == 'reset_filters') {
+      this.reset_all_filters()
     }
   }
 

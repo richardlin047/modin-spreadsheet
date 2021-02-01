@@ -7,10 +7,10 @@ class SliderFilter extends filter_base.FilterBase {
       <div class='numerical-filter grid-filter qgrid-dropdown-menu'>
         <h3 class='qgrid-popover-title'>
           <div class='dropdown-title'>Filter by ${this.field}</div>
-          <i class='fa fa-times icon-remove close-button'/>
+          <i class='fa fa-times icon-remove close-button'></i>
         </h3>
         <div class='dropdown-body'>
-          <div class='slider-range'/>
+          <div class='slider-range'></div>
           <span class='slider-label'>
             <span class='min-value'>0</span>
             <span class='range-separator'>-</span>
@@ -68,6 +68,11 @@ class SliderFilter extends filter_base.FilterBase {
 
   set_value(min_val, max_val) {
     var min_val_rounded, max_val_rounded;
+    // TODO: All NaN columns will still error
+    if (isNaN(min_val) && isNaN(max_val)) {
+      return;
+    }
+
     if (this.column_type == 'integer') {
       min_val_rounded = min_val.toFixed(0);
       max_val_rounded = max_val.toFixed(0);
@@ -98,7 +103,9 @@ class SliderFilter extends filter_base.FilterBase {
         values: [this.min_value, this.max_value],
         step: step
       });
-      this.set_value(this.min_value, this.max_value);
+      if (this.filter_elem) {
+        this.set_value(this.min_value, this.max_value);
+      }
     }
     this.send_filter_changed();
   }
@@ -108,6 +115,7 @@ class SliderFilter extends filter_base.FilterBase {
   }
 
   update_min_max(col_info, has_active_filter) {
+    // Min and max values of the unfiltered column
     this.min_value = col_info.slider_min;
     this.max_value = col_info.slider_max;
 
@@ -119,7 +127,8 @@ class SliderFilter extends filter_base.FilterBase {
       this.filter_value_min = null;
       this.filter_value_max = null;
     }
-    this.has_multiple_values = this.min_value != this.max_value;
+    // TODO: All NaN columns will still error
+    this.has_multiple_values = this.min_value != this.max_value || (isNaN(this.min_value) && isNaN(this.max_value));
 
     this.show_filter();
 
