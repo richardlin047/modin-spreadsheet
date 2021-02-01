@@ -130,17 +130,6 @@ class QgridView extends widgets.DOMWidgetView {
     });
 
     this.buttons = this.toolbar.find('.btn');
-    // TODO: Remove code regarding disabled buttons on active filter
-    this.buttons.attr('title',
-        'Not available while there is an active filter');
-    this.buttons.tooltip();
-    this.buttons.tooltip({
-      show: {delay: 300}
-    });
-    this.buttons.tooltip({
-      hide: {delay: 100, 'duration': 0}
-    });
-    this.buttons.tooltip('disable');
 
     this.full_screen_btn = null;
     if (dialog) {
@@ -727,14 +716,8 @@ class QgridView extends widgets.DOMWidgetView {
       }
     } else if (msg.type == 'update_data_view') {
       if (this.buttons) {
-        // Ignore active filter
-        // TODO: Clean up after confirming no unwanted side-effects
-      //   if (this.has_active_filter()) {
-      //     this.buttons.addClass('disabled');
-      //     this.buttons.tooltip('enable');
         if (this.buttons.hasClass('disabled')) {
           this.buttons.removeClass('disabled');
-          this.buttons.tooltip('disable');
         }
       }
       if (this.update_timeout) {
