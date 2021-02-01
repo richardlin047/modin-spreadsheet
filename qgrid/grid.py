@@ -1,6 +1,6 @@
 import ipywidgets as widgets
 import modin.pandas as pd
-import pandas as pd2
+import pandas
 import numpy as np
 import json
 
@@ -498,9 +498,9 @@ def show_grid(data_frame,
         )
 
     # if a Series is passed in, convert it to a DataFrame
-    if isinstance(data_frame, pd.Series) or isinstance(data_frame, pd2.Series):
+    if isinstance(data_frame, pd.Series) or isinstance(data_frame, pandas.Series):
         data_frame = pd.DataFrame(data_frame)
-    elif not (isinstance(data_frame, pd.DataFrame) or isinstance(data_frame, pd2.DataFrame)):
+    elif not (isinstance(data_frame, pd.DataFrame) or isinstance(data_frame, pandas.DataFrame)):
         raise TypeError(
             "data_frame must be DataFrame or Series, not %s" % type(data_frame)
         )
@@ -574,7 +574,7 @@ class QgridWidget(widgets.DOMWidget):
     _view_module_version = Unicode('^1.1.3').tag(sync=True)
     _model_module_version = Unicode('^1.1.3').tag(sync=True)
 
-    _df = Union([Instance(pd.DataFrame), Instance(pd2.DataFrame)])
+    _df = Union([Instance(pd.DataFrame), Instance(pandas.DataFrame)])
     _df_json = Unicode('', sync=True)
     _primary_key = List()
     _primary_key_display = Dict({})
@@ -590,7 +590,7 @@ class QgridWidget(widgets.DOMWidget):
     _sort_helper_columns = Dict({})
     _initialized = Bool(False)
     _ignore_df_changed = Bool(False)
-    _unfiltered_df = Union([Instance(pd.DataFrame), Instance(pd2.DataFrame)])
+    _unfiltered_df = Union([Instance(pd.DataFrame), Instance(pandas.DataFrame)])
     _index_col_name = Unicode('qgrid_unfiltered_index', sync=True)
     _sort_col_suffix = Unicode('_qgrid_sort_column')
     _multi_index = Bool(False, sync=True)
@@ -606,7 +606,7 @@ class QgridWidget(widgets.DOMWidget):
     _sort_ascending = Bool(True, sync=True)
     _handlers = Instance(_EventHandlers)
 
-    df = Union([Instance(pd.DataFrame), Instance(pd2.DataFrame)])
+    df = Union([Instance(pd.DataFrame), Instance(pandas.DataFrame)])
     precision = Integer(6, sync=True)
     grid_options = Dict(sync=True)
     column_options = Dict({})
@@ -886,7 +886,7 @@ class QgridWidget(widgets.DOMWidget):
             def should_be_stringified(col_series):
                 return col_series.dtype == np.dtype('O') or \
                        hasattr(col_series, 'cat') or \
-                       isinstance(col_series, pd.PeriodIndex) or isinstance(col_series, pd2.PeriodIndex)
+                       isinstance(col_series, pd.PeriodIndex) or isinstance(col_series, pandas.PeriodIndex)
 
             if type(df.index) == pd.MultiIndex:
                 self._multi_index = True
