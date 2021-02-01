@@ -68,7 +68,7 @@ class SliderFilter extends filter_base.FilterBase {
 
   set_value(min_val, max_val) {
     var min_val_rounded, max_val_rounded;
-    // TODO: Fix workaround
+    // TODO: All NaN columns will still error
     if (isNaN(min_val) && isNaN(max_val)) {
       return;
     }
@@ -127,7 +127,7 @@ class SliderFilter extends filter_base.FilterBase {
       this.filter_value_min = null;
       this.filter_value_max = null;
     }
-    // TODO: Fix for all NaN column. Not sure if it works.
+    // TODO: All NaN columns will still error
     this.has_multiple_values = this.min_value != this.max_value || (isNaN(this.min_value) && isNaN(this.max_value));
 
     this.show_filter();

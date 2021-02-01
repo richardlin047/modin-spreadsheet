@@ -90,7 +90,6 @@ class _DefaultSettings(object):
 
     @property
     def precision(self):
-        # return self._precision or mpd.get_option('display.precision') - 1
         # TODO: Replace with some default method
         return self._precision or 6
 

@@ -72,7 +72,7 @@ def test_edit_date():
         "2013-01-16T00:00:00.000Z",
     )
 
-# No "get_option" function on modin
+# TODO: Fix once get option or display precision getter implemented
 # def test_edit_multi_index_df():
 #     df_multi = create_multi_index_df()
 #     df_multi.index.set_names("first", level=0, inplace=True)
@@ -234,7 +234,7 @@ def test_row_edit_callback():
 
     assert expected_dict == view._editable_rows
 
-# fails on pandas too
+# TODO: Modify since test fails on pandas too.
 # def test_period_object_column():
 #     range_index = pd.period_range(start="2000", periods=10, freq="B")
 #     df = pd.DataFrame({"a": 5, "b": range_index}, index=range_index)
