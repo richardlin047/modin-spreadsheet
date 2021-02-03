@@ -2,4 +2,6 @@ include README.rst
 include LICENSE
 include requirements*.txt
 
-recursive-include qgrid/static *.*
+recursive-include msheet/static *.*
+include versioneer.py
+include msheet/_version.py

@@ -73,7 +73,7 @@ class DateFilter extends filter_base.FilterBase {
       beforeShow: (input, inst) => {
         // align the datepicker with the right edge of the input it drops down from
         var clicked_elem = $(inst);
-        clicked_elem.closest(".qgrid-dropdown-menu").addClass("calendar-open");
+        clicked_elem.closest(".msheet-dropdown-menu").addClass("calendar-open");
 
         var widget = clicked_elem.datepicker('widget');
         widget.css('margin-left', $(input).outerWidth() - widget.outerWidth());

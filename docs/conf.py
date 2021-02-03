@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# qgrid documentation build configuration file, created by
+# msheet documentation build configuration file, created by
 # sphinx-quickstart on Tue Sep  1 11:25:28 2015.
 #
 # This file is execfile()d with the current directory set to its
@@ -21,7 +21,7 @@ import shlex
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 # sys.path.insert(0, os.path.abspath('.'))
 sys.path.append(os.path.abspath(".."))
-# sys.path.append(os.path.abspath('../qgrid'))
+# sys.path.append(os.path.abspath('../msheet'))
 
 # -- General configuration ------------------------------------------------
 
@@ -50,7 +50,7 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"qgrid"
+project = u"msheet"
 copyright = u"2015, Quantopian, Inc."
 author = u"Quantopian, Inc."
 
@@ -223,7 +223,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "qgrid.tex", u"qgrid Documentation", u"Quantopian, Inc.", "manual"),
+    (master_doc, "msheet.tex", u"msheet Documentation", u"Quantopian, Inc.", "manual"),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -251,7 +251,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "qgrid", u"qgrid Documentation", [author], 1)]
+man_pages = [(master_doc, "msheet", u"msheet Documentation", [author], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -265,10 +265,10 @@ man_pages = [(master_doc, "qgrid", u"qgrid Documentation", [author], 1)]
 texinfo_documents = [
     (
         master_doc,
-        "qgrid",
-        u"qgrid Documentation",
+        "msheet",
+        u"msheet Documentation",
         author,
-        "qgrid",
+        "msheet",
         "One line description of project.",
         "Miscellaneous",
     ),

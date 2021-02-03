@@ -132,17 +132,17 @@ class _EventHandlers(object):
 
 defaults = _DefaultSettings()
 handlers = _EventHandlers()
-HISTORY_PREFIX = "# ---- qgrid transformation history ----\n"
+HISTORY_PREFIX = "# ---- msheet transformation history ----\n"
 
 
 def set_defaults(
     show_toolbar=None, precision=None, grid_options=None, column_options=None
 ):
     """
-    Set the default qgrid options.  The options that you can set here are the
+    Set the default msheet options.  The options that you can set here are the
     same ones that you can pass into ``QgridWidget`` constructor, with the
     exception of the ``df`` option, for which a default value wouldn't be
-    particularly useful (since the purpose of qgrid is to display a DataFrame).
+    particularly useful (since the purpose of msheet is to display a DataFrame).
 
     See the documentation for ``QgridWidget`` for more information.
 
@@ -169,7 +169,7 @@ def set_defaults(
 
 def on(names, handler):
     """
-    Setup a handler to be called when a user interacts with any qgrid instance.
+    Setup a handler to be called when a user interacts with any msheet instance.
 
     Parameters
     ----------
@@ -198,7 +198,7 @@ def on(names, handler):
     ``instance_create`` event.  This event is only available at the
     module-level and not on individual QgridWidget instances.
 
-    The reason it's not available on individual qgrid instances is because
+    The reason it's not available on individual msheet instances is because
     the only time it fires is when a new instance is created. This means
     it's already done firing by the time a user has a chance to hook up any
     event listeners.
@@ -236,7 +236,7 @@ def on(names, handler):
 
 def off(names, handler):
     """
-    Remove a qgrid event handler that was registered with the ``on`` method.
+    Remove a msheet event handler that was registered with the ``on`` method.
 
     Parameters
     ----------
@@ -284,15 +284,15 @@ def _display_as_qgrid(data):
 
 def enable(dataframe=True, series=True):
     """
-    Automatically use qgrid to display all DataFrames and/or Series
+    Automatically use msheet to display all DataFrames and/or Series
     instances in the notebook.
 
     Parameters
     ----------
     dataframe : bool
-        Whether to automatically use qgrid to display DataFrames instances.
+        Whether to automatically use msheet to display DataFrames instances.
     series : bool
-        Whether to automatically use qgrid to display Series instances.
+        Whether to automatically use msheet to display Series instances.
     """
     try:
         from IPython.core.getipython import get_ipython
@@ -315,7 +315,7 @@ def enable(dataframe=True, series=True):
 
 def disable():
     """
-    Stop using qgrid to display DataFrames and Series instances in the
+    Stop using msheet to display DataFrames and Series instances in the
     notebook.  This has the same effect as calling ``enable`` with both
     kwargs set to ``False`` (and in fact, that's what this function does
     internally).
@@ -333,7 +333,7 @@ def show_grid(
     row_edit_callback=None,
 ):
     """
-    Renders a DataFrame or Series as an interactive qgrid, represented by
+    Renders a DataFrame or Series as an interactive msheet, represented by
     an instance of the ``QgridWidget`` class.  The ``QgridWidget`` instance
     is constructed using the options passed in to this function.  The
     ``data_frame`` argument to this function is used as the ``df`` kwarg in
@@ -547,7 +547,7 @@ class QgridWidget(widgets.DOMWidget):
     --------
     show_grid : The method that should be used to construct QgridWidget
                 instances, because it provides reasonable defaults for all
-                of the qgrid options.
+                of the msheet options.
 
     Attributes
     ----------
@@ -573,8 +573,8 @@ class QgridWidget(widgets.DOMWidget):
 
     _view_name = Unicode("QgridView").tag(sync=True)
     _model_name = Unicode("QgridModel").tag(sync=True)
-    _view_module = Unicode("qgrid").tag(sync=True)
-    _model_module = Unicode("qgrid").tag(sync=True)
+    _view_module = Unicode("msheet").tag(sync=True)
+    _model_module = Unicode("msheet").tag(sync=True)
     _view_module_version = Unicode("^1.1.3").tag(sync=True)
     _model_module_version = Unicode("^1.1.3").tag(sync=True)
 
@@ -632,7 +632,7 @@ class QgridWidget(widgets.DOMWidget):
 
         self._history = []
         self._qgrid_msgs = []
-        self._history_metadata_tag = "qgrid" + str(uuid4())
+        self._history_metadata_tag = "msheet" + str(uuid4())
         self._resetting_filters = False
 
     def _grid_options_default(self):
@@ -791,7 +791,7 @@ class QgridWidget(widgets.DOMWidget):
 
     def off(self, names, handler):
         """
-        Remove a qgrid event handler that was registered with the current
+        Remove a msheet event handler that was registered with the current
         instance's ``on`` method.
 
         Parameters

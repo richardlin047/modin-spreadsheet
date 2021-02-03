@@ -1,4 +1,4 @@
-from qgrid import QgridWidget, set_defaults, show_grid, on as qgrid_on
+from msheet import QgridWidget, set_defaults, show_grid, on as qgrid_on
 from traitlets import All
 import numpy as np
 

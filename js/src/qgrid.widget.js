@@ -28,7 +28,7 @@ require('style-loader!slickgrid-qgrid/slick-default-theme.css');
 require('style-loader!jquery-ui-dist/jquery-ui.min.css');
 require('style-loader!./qgrid.css');
 
-// Model for the qgrid widget
+// Model for the msheet widget
 class QgridModel extends widgets.DOMWidgetModel {
   defaults() {
     return _.extend(widgets.DOMWidgetModel.prototype.defaults(), {
@@ -45,7 +45,7 @@ class QgridModel extends widgets.DOMWidgetModel {
 }
 
 
-// View for the qgrid widget
+// View for the msheet widget
 class QgridView extends widgets.DOMWidgetView {
   render() {
     // subscribe to incoming messages from the QGridWidget
@@ -133,7 +133,7 @@ class QgridView extends widgets.DOMWidgetView {
 
     this.full_screen_btn = null;
     if (dialog) {
-      this.full_screen_modal = $('body').find('.qgrid-modal');
+      this.full_screen_modal = $('body').find('.msheet-modal');
       if (this.full_screen_modal.length == 0) {
         this.full_screen_modal = $(`
           <div class="modal qgrid-modal">
@@ -211,7 +211,7 @@ class QgridView extends widgets.DOMWidgetView {
       var qgrid_modal = dialog.modal(modal_options);
 
       qgrid_modal.removeClass('fade');
-      qgrid_modal.addClass('qgrid-modal');
+      qgrid_modal.addClass('msheet-modal');
       qgrid_modal.on('shown.bs.modal', (e) => {
         this.slick_grid.resizeCanvas();
       });

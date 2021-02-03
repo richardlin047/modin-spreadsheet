@@ -39,7 +39,7 @@ module.exports = [
         entry: './src/extension.js',
         output: {
             filename: 'extension.js',
-            path: path.resolve(__dirname, '..', 'qgrid', 'static'),
+            path: path.resolve(__dirname, '..', 'msheet', 'static'),
             libraryTarget: 'amd'
         },
         plugins: plugins,
@@ -54,7 +54,7 @@ module.exports = [
         entry: './src/index.js',
         output: {
             filename: 'index.js',
-            path: path.resolve(__dirname, '..', 'qgrid', 'static'),
+            path: path.resolve(__dirname, '..', 'msheet', 'static'),
             libraryTarget: 'amd'
         },
         devtool: 'source-map',
@@ -65,7 +65,7 @@ module.exports = [
         plugins: plugins,
         mode: 'production'
     },
-    {// Embeddable qgrid bundle
+    {// Embeddable msheet bundle
      //
      // This bundle is generally almost identical to the notebook bundle
      // containing the custom widget views and models.
@@ -84,7 +84,7 @@ module.exports = [
             filename: 'index.js',
             path: path.resolve(__dirname, './dist/'),
             libraryTarget: 'amd',
-            publicPath: 'https://unpkg.com/qgrid@' + version + '/dist/'
+            publicPath: 'https://unpkg.com/msheet@' + version + '/dist/'
         },
         devtool: 'source-map',
         module: {

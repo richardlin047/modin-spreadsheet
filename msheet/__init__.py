@@ -17,8 +17,8 @@ def _jupyter_nbextension_paths():
         {
             "section": "notebook",
             "src": "static",
-            "dest": "qgrid",
-            "require": "qgrid/extension",
+            "dest": "msheet",
+            "require": "msheet/extension",
         }
     ]
 
@@ -36,4 +36,8 @@ __all__ = [
 ]
 
 __version__ = get_versions()["version"]
+del get_versions
+
+from ._version import get_versions
+__version__ = get_versions()['version']
 del get_versions
