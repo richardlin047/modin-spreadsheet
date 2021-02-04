@@ -17,8 +17,8 @@ def _jupyter_nbextension_paths():
         {
             "section": "notebook",
             "src": "static",
-            "dest": "qgrid",
-            "require": "qgrid/extension",
+            "dest": "modin_spreadsheet",
+            "require": "modin_spreadsheet/extension",
         }
     ]
 
@@ -34,6 +34,11 @@ __all__ = [
     "QgridWidget",
     "QGridWidget",
 ]
+
+__version__ = get_versions()["version"]
+del get_versions
+
+from ._version import get_versions
 
 __version__ = get_versions()["version"]
 del get_versions

@@ -573,10 +573,10 @@ class QgridWidget(widgets.DOMWidget):
 
     _view_name = Unicode("QgridView").tag(sync=True)
     _model_name = Unicode("QgridModel").tag(sync=True)
-    _view_module = Unicode("qgrid").tag(sync=True)
-    _model_module = Unicode("qgrid").tag(sync=True)
-    _view_module_version = Unicode("^1.1.3").tag(sync=True)
-    _model_module_version = Unicode("^1.1.3").tag(sync=True)
+    _view_module = Unicode("modin_spreadsheet").tag(sync=True)
+    _model_module = Unicode("modin_spreadsheet").tag(sync=True)
+    _view_module_version = Unicode("^0.1.0").tag(sync=True)
+    _model_module_version = Unicode("^0.1.0").tag(sync=True)
 
     _df = Union([Instance(pd.DataFrame), Instance(pandas.DataFrame)])
     _df_json = Unicode("", sync=True)

@@ -75,8 +75,8 @@ class NPM(Command):
     node_modules = join(node_root, "node_modules")
 
     targets = [
-        join(here, "qgrid", "static", "extension.js"),
-        join(here, "qgrid", "static", "index.js"),
+        join(here, "modin_spreadsheet", "static", "extension.js"),
+        join(here, "modin_spreadsheet", "static", "index.js"),
     ]
 
     def initialize_options(self):
@@ -144,7 +144,7 @@ def package_files(directory):
     return paths
 
 
-data_files = package_files("qgrid/static")
+data_files = package_files("modin_spreadsheet/static")
 
 
 def extras_require():
@@ -159,7 +159,7 @@ setup_args = {
     "long_description": LONG_DESCRIPTION,
     "include_package_data": True,
     "data_files": [
-        ("share/jupyter/nbextensions/qgrid", data_files),
+        ("share/jupyter/nbextensions/modin_spreadsheet", data_files),
     ],
     "install_requires": reqs,
     "extras_require": extras_require(),
@@ -176,4 +176,6 @@ setup_args = {
     ],
 }
 
-setup(version=versioneer.get_version(), cmdclass=versioneer.get_cmdclass(),**setup_args)
+setup(
+    version=versioneer.get_version(), cmdclass=versioneer.get_cmdclass(), **setup_args
+)
