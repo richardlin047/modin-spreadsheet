@@ -2,11 +2,11 @@ var widgets = require('@jupyter-widgets/base');
 var _ = require('underscore');
 var moment = require('moment');
 window.$ = window.jQuery = require('jquery');
-var date_filter = require('./qgrid.datefilter.js');
-var slider_filter = require('./qgrid.sliderfilter.js');
-var text_filter = require('./qgrid.textfilter.js');
-var boolean_filter = require('./qgrid.booleanfilter.js');
-var editors = require('./qgrid.editors.js');
+var date_filter = require('./spreadsheet.datefilter.js');
+var slider_filter = require('./spreadsheet.sliderfilter.js');
+var text_filter = require('./spreadsheet.textfilter.js');
+var boolean_filter = require('./spreadsheet.booleanfilter.js');
+var editors = require('./spreadsheet.editors.js');
 var dialog = null;
 try {
   dialog = require('base/js/dialog');
@@ -26,7 +26,7 @@ require('slickgrid-qgrid/slick.editors.js');
 require('style-loader!slickgrid-qgrid/slick.grid.css');
 require('style-loader!slickgrid-qgrid/slick-default-theme.css');
 require('style-loader!jquery-ui-dist/jquery-ui.min.css');
-require('style-loader!./qgrid.css');
+require('style-loader!./spreadsheet.css');
 
 // Model for the qgrid widget
 class QgridModel extends widgets.DOMWidgetModel {
@@ -59,8 +59,8 @@ class QgridView extends widgets.DOMWidgetView {
    */
   initialize_qgrid() {
     this.$el.empty();
-    if (!this.$el.hasClass('q-grid-container')){
-      this.$el.addClass('q-grid-container');
+    if (!this.$el.hasClass('spreadsheet-container')){
+      this.$el.addClass('spreadsheet-container');
     }
     this.initialize_toolbar();
     this.initialize_slick_grid();
@@ -84,7 +84,7 @@ class QgridView extends widgets.DOMWidgetView {
       return;
     }
 
-    this.toolbar = $("<div class='q-grid-toolbar'>").appendTo(this.$el);
+    this.toolbar = $("<div class='spreadsheet-toolbar'>").appendTo(this.$el);
 
     let append_btn = (btn_info) => {
       return $(`
@@ -133,10 +133,10 @@ class QgridView extends widgets.DOMWidgetView {
 
     this.full_screen_btn = null;
     if (dialog) {
-      this.full_screen_modal = $('body').find('.qgrid-modal');
+      this.full_screen_modal = $('body').find('.spreadsheet-modal');
       if (this.full_screen_modal.length == 0) {
         this.full_screen_modal = $(`
-          <div class="modal qgrid-modal">
+          <div class="modal spreadsheet-modal">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-body"></div>
@@ -211,7 +211,7 @@ class QgridView extends widgets.DOMWidgetView {
       var qgrid_modal = dialog.modal(modal_options);
 
       qgrid_modal.removeClass('fade');
-      qgrid_modal.addClass('qgrid-modal');
+      qgrid_modal.addClass('spreadsheet-modal');
       qgrid_modal.on('shown.bs.modal', (e) => {
         this.slick_grid.resizeCanvas();
       });
@@ -235,7 +235,7 @@ class QgridView extends widgets.DOMWidgetView {
   initialize_slick_grid() {
 
     if (!this.grid_elem) {
-      this.grid_elem = $("<div class='q-grid'>").appendTo(this.$el);
+      this.grid_elem = $("<div class='spreadsheet-grid'>").appendTo(this.$el);
     }
 
     // create the table
