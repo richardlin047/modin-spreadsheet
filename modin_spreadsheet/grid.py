@@ -132,7 +132,7 @@ class _EventHandlers(object):
 
 defaults = _DefaultSettings()
 handlers = _EventHandlers()
-HISTORY_PREFIX = "# ---- qgrid transformation history ----\n"
+HISTORY_PREFIX = "# ---- spreadsheet transformation history ----\n"
 
 
 def set_defaults(
@@ -278,7 +278,7 @@ def set_grid_option(optname, optvalue):
     defaults.grid_options[optname] = optvalue
 
 
-def _display_as_qgrid(data):
+def _display_as_spreadsheet(data):
     display(show_grid(data))
 
 
@@ -303,12 +303,12 @@ def enable(dataframe=True, series=True):
     ip_formatter = ip.display_formatter.ipython_display_formatter
 
     if dataframe:
-        ip_formatter.for_type(pd.DataFrame, _display_as_qgrid)
+        ip_formatter.for_type(pd.DataFrame, _display_as_spreadsheet)
     else:
         ip_formatter.type_printers.pop(pd.DataFrame, None)
 
     if series:
-        ip_formatter.for_type(pd.Series, _display_as_qgrid)
+        ip_formatter.for_type(pd.Series, _display_as_spreadsheet)
     else:
         ip_formatter.type_printers.pop(pd.Series)
 
@@ -595,8 +595,8 @@ class SpreadsheetWidget(widgets.DOMWidget):
     _initialized = Bool(False)
     _ignore_df_changed = Bool(False)
     _unfiltered_df = Union([Instance(pd.DataFrame), Instance(pandas.DataFrame)])
-    _index_col_name = Unicode("qgrid_unfiltered_index", sync=True)
-    _sort_col_suffix = Unicode("_qgrid_sort_column")
+    _index_col_name = Unicode("modin_spreadsheet_unfiltered_index", sync=True)
+    _sort_col_suffix = Unicode("_modin_spreadsheet_sort_column")
     _multi_index = Bool(False, sync=True)
     _edited = Bool(False)
     _selected_rows = List([])
@@ -621,7 +621,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
         self._initialized = False
         super(SpreadsheetWidget, self).__init__(*args, **kwargs)
         # register a callback for custom messages
-        self.on_msg(self._handle_qgrid_msg)
+        self.on_msg(self._handle_view_msg)
         self._initialized = True
         self._handlers = _EventHandlers()
 
@@ -631,8 +631,8 @@ class SpreadsheetWidget(widgets.DOMWidget):
             self._update_df()
 
         self._history = []
-        self._qgrid_msgs = []
-        self._history_metadata_tag = "qgrid" + str(uuid4())
+        self._view_msgs = []
+        self._history_metadata_tag = "modin_spreadsheet" + str(uuid4())
         self._resetting_filters = False
 
     def _grid_options_default(self):
@@ -1488,15 +1488,15 @@ class SpreadsheetWidget(widgets.DOMWidget):
             self._update_table(triggered_by="change_filter")
         self._ignore_df_changed = False
 
-    def _handle_qgrid_msg(self, widget, content, buffers=None):
+    def _handle_view_msg(self, widget, content, buffers=None):
         try:
-            self._qgrid_msgs.append(content)
-            self._handle_qgrid_msg_helper(content)
+            self._view_msgs.append(content)
+            self._handle_view_msg_helper(content)
         except Exception as e:
             self.log.error(e)
             self.log.exception("Unhandled exception while handling msg")
 
-    def _handle_qgrid_msg_helper(self, content):
+    def _handle_view_msg_helper(self, content):
         """Handle incoming messages from the ModinSpreadsheetView"""
         if "type" not in content:
             return

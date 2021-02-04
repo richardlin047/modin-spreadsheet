@@ -5,7 +5,7 @@ class BooleanFilter extends filter_base.FilterBase {
 
   get_filter_html() {
     return `
-      <div class='boolean-filter grid-filter qgrid-dropdown-menu'>
+      <div class='boolean-filter grid-filter spreadsheet-dropdown-menu'>
         <h3 class='spreadsheet-popover-title'>
           <div class='dropdown-title'>Filter by ${this.field}</div>
           <i class='fa fa-times icon-remove close-button'></i>

@@ -208,14 +208,14 @@ class ModinSpreadsheetView extends widgets.DOMWidgetView {
       if (IPython && IPython.keyboard_manager) {
         modal_options.keyboard_manager = IPython.keyboard_manager;
       }
-      var qgrid_modal = dialog.modal(modal_options);
+      var spreadsheet_modal = dialog.modal(modal_options);
 
-      qgrid_modal.removeClass('fade');
-      qgrid_modal.addClass('spreadsheet-modal');
-      qgrid_modal.on('shown.bs.modal', (e) => {
+      spreadsheet_modal.removeClass('fade');
+      spreadsheet_modal.addClass('spreadsheet-modal');
+      spreadsheet_modal.on('shown.bs.modal', (e) => {
         this.slick_grid.resizeCanvas();
       });
-      qgrid_modal.on('hidden.bs.modal', (e) => {
+      spreadsheet_modal.on('hidden.bs.modal', (e) => {
         this.$el.detach();
         this.$el_wrapper.height('auto');
         this.$el_wrapper.append(this.$el);
@@ -223,7 +223,7 @@ class ModinSpreadsheetView extends widgets.DOMWidgetView {
         this.slick_grid.bindAllEvents();
         this.bind_toolbar_events();
       });
-      qgrid_modal.modal('show');
+      spreadsheet_modal.modal('show');
     });
   }
 

@@ -125,8 +125,8 @@ class FilterBase {
     this.filter_elem.width(filter_width);
     var elem_right = left + filter_width;
 
-    var qgrid_area = this.filter_elem.closest('.spreadsheet-container');
-    if (elem_right > qgrid_area.offset().left + qgrid_area.width()) {
+    var container_area = this.filter_elem.closest('.spreadsheet-container');
+    if (elem_right > container_area.offset().left + container_area.width()) {
       left = (this.filter_btn.offset().left + this.filter_btn.width()) - filter_width;
     }
 
