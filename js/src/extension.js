@@ -7,7 +7,7 @@ if (window.require) {
     window.require.config({
         map: {
             "*" : {
-                "qgrid": "nbextensions/qgrid/index"
+                "modin_spreadsheet": "nbextensions/modin_spreadsheet/index"
             }
         }
     });
