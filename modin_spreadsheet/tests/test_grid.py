@@ -50,7 +50,7 @@ def create_interval_index_df():
 def init_event_history(event_names, widget=None):
     event_history = []
 
-    def on_change(event, qgrid_widget):
+    def on_change(event, spreadsheet_widget):
         event_history.append(event)
 
     if widget is not None:
@@ -669,10 +669,10 @@ def test_change_selection():
 
 def test_instance_created():
     event_history = init_event_history(All)
-    qgrid_widget = show_grid(create_df())
+    spreadsheet_widget = show_grid(create_df())
 
     assert event_history == [{"name": "instance_created"}]
-    assert qgrid_widget.id
+    assert spreadsheet_widget.id
 
 
 def test_add_row():

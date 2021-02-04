@@ -119,12 +119,12 @@ class _EventHandlers(object):
             except KeyError:
                 pass
 
-    def notify_listeners(self, event, qgrid_widget):
+    def notify_listeners(self, event, spreadsheet_widget):
         self._events.append(event)
         event_listeners = self._listeners.get(event["name"], [])
         all_listeners = self._listeners.get(All, [])
         for c in chain(event_listeners, all_listeners):
-            c(event, qgrid_widget)
+            c(event, spreadsheet_widget)
 
     def get_events(self):
         return self._events
@@ -509,7 +509,7 @@ def show_grid(
     column_definitions = column_definitions or {}
 
     # create a visualization for the dataframe
-    return QgridWidget(
+    return SpreadsheetWidget(
         df=data_frame,
         precision=precision,
         grid_options=grid_options,
@@ -531,7 +531,7 @@ def stringify(x):
 
 
 @widgets.register()
-class QgridWidget(widgets.DOMWidget):
+class SpreadsheetWidget(widgets.DOMWidget):
     """
     The widget class which is instantiated by the ``show_grid`` method. This
     class can be constructed directly but that's not recommended because
@@ -571,8 +571,8 @@ class QgridWidget(widgets.DOMWidget):
 
     """
 
-    _view_name = Unicode("QgridView").tag(sync=True)
-    _model_name = Unicode("QgridModel").tag(sync=True)
+    _view_name = Unicode("ModinSpreadsheetView").tag(sync=True)
+    _model_name = Unicode("ModinSpreadsheetModel").tag(sync=True)
     _view_module = Unicode("modin_spreadsheet").tag(sync=True)
     _model_module = Unicode("modin_spreadsheet").tag(sync=True)
     _view_module_version = Unicode("^0.1.0").tag(sync=True)
@@ -619,7 +619,7 @@ class QgridWidget(widgets.DOMWidget):
     def __init__(self, *args, **kwargs):
         self.id = str(uuid4())
         self._initialized = False
-        super(QgridWidget, self).__init__(*args, **kwargs)
+        super(SpreadsheetWidget, self).__init__(*args, **kwargs)
         # register a callback for custom messages
         self.on_msg(self._handle_qgrid_msg)
         self._initialized = True
@@ -1497,7 +1497,7 @@ class QgridWidget(widgets.DOMWidget):
             self.log.exception("Unhandled exception while handling msg")
 
     def _handle_qgrid_msg_helper(self, content):
-        """Handle incoming messages from the QGridView"""
+        """Handle incoming messages from the ModinSpreadsheetView"""
         if "type" not in content:
             return
 
@@ -2015,6 +2015,3 @@ class QgridWidget(widgets.DOMWidget):
     def reset_filters(self):
         self.send({"type": "reset_filters"})
 
-
-# Alias for legacy support, since we changed the capitalization
-QGridWidget = QgridWidget

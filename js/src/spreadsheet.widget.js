@@ -11,7 +11,7 @@ var dialog = null;
 try {
   dialog = require('base/js/dialog');
 } catch (e) {
-  console.warn("Qgrid was unable to load base/js/dialog. " +
+  console.warn("Modin Spreadsheet was unable to load base/js/dialog. " +
                "Full screen button won't be available");
 }
 var jquery_ui = require('jquery-ui-dist/jquery-ui.min.js');
@@ -28,12 +28,12 @@ require('style-loader!slickgrid-qgrid/slick-default-theme.css');
 require('style-loader!jquery-ui-dist/jquery-ui.min.css');
 require('style-loader!./spreadsheet.css');
 
-// Model for the qgrid widget
-class QgridModel extends widgets.DOMWidgetModel {
+// Model for the modin-spreadsheet widget
+class ModinSpreadsheetModel extends widgets.DOMWidgetModel {
   defaults() {
     return _.extend(widgets.DOMWidgetModel.prototype.defaults(), {
-      _model_name : 'QgridModel',
-      _view_name : 'QgridView',
+      _model_name : 'ModinSpreadsheetModel',
+      _view_name : 'ModinSpreadsheetView',
       _model_module : 'modin_spreadsheet',
       _view_module : 'modin_spreadsheet',
       _model_module_version : '^0.1.0',
@@ -45,19 +45,19 @@ class QgridModel extends widgets.DOMWidgetModel {
 }
 
 
-// View for the qgrid widget
-class QgridView extends widgets.DOMWidgetView {
+// View for the modin-spreadsheet widget
+class ModinSpreadsheetView extends widgets.DOMWidgetView {
   render() {
-    // subscribe to incoming messages from the QGridWidget
+    // subscribe to incoming messages from the SpreadsheetWidget
     this.model.on('msg:custom', this.handle_msg, this);
-    this.initialize_qgrid();
+    this.initialize_modin_spreadsheet();
   }
 
   /**
    * Main entry point for drawing the widget,
    * including toolbar buttons if necessary.
    */
-  initialize_qgrid() {
+  initialize_modin_spreadsheet() {
     this.$el.empty();
     if (!this.$el.hasClass('spreadsheet-container')){
       this.$el.addClass('spreadsheet-container');
@@ -703,7 +703,7 @@ class QgridView extends widgets.DOMWidgetView {
   }
 
   /**
-   * Handle messages from the QGridWidget.
+   * Handle messages from the SpreadsheetWidget.
    */
   handle_msg(msg) {
     if (msg.type === 'draw_table') {
@@ -888,6 +888,6 @@ class QgridView extends widgets.DOMWidgetView {
 }
 
 module.exports = {
-  QgridModel : QgridModel,
-  QgridView : QgridView
+  ModinSpreadsheetModel : ModinSpreadsheetModel,
+  ModinSpreadsheetView : ModinSpreadsheetView
 };

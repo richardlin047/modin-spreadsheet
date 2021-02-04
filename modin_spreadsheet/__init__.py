@@ -6,8 +6,7 @@ from .grid import (
     off,
     set_grid_option,
     show_grid,
-    QgridWidget,
-    QGridWidget,
+    SpreadsheetWidget,
 )
 from ._version import get_versions
 
@@ -31,8 +30,7 @@ __all__ = [
     "off",
     "set_grid_option",
     "show_grid",
-    "QgridWidget",
-    "QGridWidget",
+    "SpreadsheetWidget",
 ]
 
 __version__ = get_versions()["version"]
