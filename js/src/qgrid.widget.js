@@ -36,8 +36,8 @@ class QgridModel extends widgets.DOMWidgetModel {
       _view_name : 'QgridView',
       _model_module : 'modin_spreadsheet',
       _view_module : 'modin_spreadsheet',
-      _model_module_version : '^1.1.3',
-      _view_module_version : '^1.1.3',
+      _model_module_version : '^0.1.0',
+      _view_module_version : '^0.1.0',
       _df_json: '',
       _columns: {}
     });
