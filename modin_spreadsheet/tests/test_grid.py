@@ -1,4 +1,4 @@
-from modin_spreadsheet import QgridWidget, set_defaults, show_grid, on as qgrid_on
+from modin_spreadsheet import SpreadsheetWidget, set_defaults, show_grid, on as widget_on
 from traitlets import All
 import numpy as np
 
@@ -56,13 +56,13 @@ def init_event_history(event_names, widget=None):
     if widget is not None:
         widget.on(event_names, on_change)
     else:
-        qgrid_on(event_names, on_change)
+        widget_on(event_names, on_change)
 
     return event_history
 
 
 def test_edit_date():
-    view = QgridWidget(df=create_df())
+    view = SpreadsheetWidget(df=create_df())
     check_edit_success(
         view,
         "Date",
@@ -78,7 +78,7 @@ def test_edit_date():
 # def test_edit_multi_index_df():
 #     df_multi = create_multi_index_df()
 #     df_multi.index.set_names("first", level=0, inplace=True)
-#     view = QgridWidget(df=df_multi)
+#     view = SpreadsheetWidget(df=df_multi)
 #     old_val = df_multi.loc[("bar", "two"), 1]
 #
 #     check_edit_success(
@@ -107,7 +107,7 @@ def check_edit_success(
     grid_data = json.loads(widget._df_json)["data"]
     assert grid_data[row_index][str(col_name)] == old_val_json
 
-    widget._handle_qgrid_msg_helper(
+    widget._handle_view_msg_helper(
         {
             "column": col_name,
             "row_index": row_index,
@@ -138,7 +138,7 @@ def check_edit_success(
 
 def test_edit_number():
     old_val = 3
-    view = QgridWidget(df=create_df())
+    view = SpreadsheetWidget(df=create_df())
 
     for idx in range(-10, 10, 1):
         check_edit_success(view, "D", 2, old_val, old_val, idx, idx)
@@ -146,10 +146,10 @@ def test_edit_number():
 
 
 def test_add_row_button():
-    widget = QgridWidget(df=create_df())
+    widget = SpreadsheetWidget(df=create_df())
     event_history = init_event_history("row_added", widget=widget)
 
-    widget._handle_qgrid_msg_helper({"type": "add_row"})
+    widget._handle_view_msg_helper({"type": "add_row"})
 
     assert event_history == [{"name": "row_added", "index": 4, "source": "gui"}]
 
@@ -158,7 +158,7 @@ def test_add_row_button():
     added_index = event_history[0]["index"]
     expected_values = pd.Series(
         {
-            "qgrid_unfiltered_index": 4,
+            "modin_spreadsheet_unfiltered_index": 4,
             "A": 1,
             "C": 1,
             "D": 3,
@@ -172,15 +172,15 @@ def test_add_row_button():
 
 
 def test_remove_row_button():
-    widget = QgridWidget(df=create_df())
+    widget = SpreadsheetWidget(df=create_df())
     event_history = init_event_history(
         ["row_removed", "selection_changed"], widget=widget
     )
 
     selected_rows = [1, 2]
-    widget._handle_qgrid_msg_helper({"rows": selected_rows, "type": "change_selection"})
+    widget._handle_view_msg_helper({"rows": selected_rows, "type": "change_selection"})
 
-    widget._handle_qgrid_msg_helper({"type": "remove_row"})
+    widget._handle_view_msg_helper({"type": "remove_row"})
 
     assert event_history == [
         {
@@ -196,22 +196,22 @@ def test_remove_row_button():
 def test_mixed_type_column():
     df = pd.DataFrame({"A": [1.2, "xy", 4], "B": [3, 4, 5]})
     df = df.set_index(pd.Index(["yz", 7, 3.2]))
-    view = QgridWidget(df=df)
-    view._handle_qgrid_msg_helper(
+    view = SpreadsheetWidget(df=df)
+    view._handle_view_msg_helper(
         {"type": "change_sort", "sort_field": "A", "sort_ascending": True}
     )
-    view._handle_qgrid_msg_helper(
+    view._handle_view_msg_helper(
         {"type": "show_filter_dropdown", "field": "A", "search_val": None}
     )
 
 
 def test_nans():
     df = pd.DataFrame([(pd.Timestamp("2017-02-02"), np.nan), (4, 2), ("foo", "bar")])
-    view = QgridWidget(df=df)
-    view._handle_qgrid_msg_helper(
+    view = SpreadsheetWidget(df=df)
+    view._handle_view_msg_helper(
         {"type": "change_sort", "sort_field": 1, "sort_ascending": True}
     )
-    view._handle_qgrid_msg_helper(
+    view._handle_view_msg_helper(
         {"type": "show_filter_dropdown", "field": 1, "search_val": None}
     )
 
@@ -222,9 +222,9 @@ def test_row_edit_callback():
     def can_edit_row(row):
         return row["E"] == "train" and row["F"] == "bar"
 
-    view = QgridWidget(df=sample_df, row_edit_callback=can_edit_row)
+    view = SpreadsheetWidget(df=sample_df, row_edit_callback=can_edit_row)
 
-    view._handle_qgrid_msg_helper(
+    view._handle_view_msg_helper(
         {"type": "change_sort", "sort_field": "index", "sort_ascending": True}
     )
 
@@ -237,17 +237,17 @@ def test_row_edit_callback():
 # def test_period_object_column():
 #     range_index = pd.period_range(start="2000", periods=10, freq="B")
 #     df = pd.DataFrame({"a": 5, "b": range_index}, index=range_index)
-#     view = QgridWidget(df=df)
-#     view._handle_qgrid_msg_helper(
+#     view = SpreadsheetWidget(df=df)
+#     view._handle_view_msg_helper(
 #         {"type": "change_sort", "sort_field": "index", "sort_ascending": True}
 #     )
-#     view._handle_qgrid_msg_helper(
+#     view._handle_view_msg_helper(
 #         {"type": "show_filter_dropdown", "field": "index", "search_val": None}
 #     )
-#     view._handle_qgrid_msg_helper(
+#     view._handle_view_msg_helper(
 #         {"type": "change_sort", "sort_field": "b", "sort_ascending": True}
 #     )
-#     view._handle_qgrid_msg_helper(
+#     view._handle_view_msg_helper(
 #         {"type": "show_filter_dropdown", "field": "b", "search_val": None}
 #     )
 
@@ -255,16 +255,16 @@ def test_row_edit_callback():
 def test_get_selected_df():
     sample_df = create_df()
     selected_rows = [1, 3]
-    view = QgridWidget(df=sample_df)
-    view._handle_qgrid_msg_helper({"rows": selected_rows, "type": "change_selection"})
+    view = SpreadsheetWidget(df=sample_df)
+    view._handle_view_msg_helper({"rows": selected_rows, "type": "change_selection"})
     selected_df = view.get_selected_df()
     assert len(selected_df) == 2
     assert sample_df.iloc[selected_rows].equals(selected_df)
 
 
 def test_integer_index_filter():
-    view = QgridWidget(df=create_df())
-    view._handle_qgrid_msg_helper(
+    view = SpreadsheetWidget(df=create_df())
+    view._handle_view_msg_helper(
         {
             "field": "index",
             "filter_info": {
@@ -281,11 +281,11 @@ def test_integer_index_filter():
 
 
 def test_series_of_text_filters():
-    view = QgridWidget(df=create_df())
-    view._handle_qgrid_msg_helper(
+    view = SpreadsheetWidget(df=create_df())
+    view._handle_view_msg_helper(
         {"type": "show_filter_dropdown", "field": "E", "search_val": None}
     )
-    view._handle_qgrid_msg_helper(
+    view._handle_view_msg_helper(
         {
             "field": "E",
             "filter_info": {
@@ -301,7 +301,7 @@ def test_series_of_text_filters():
     assert len(filtered_df) == 2
 
     # reset the filter...
-    view._handle_qgrid_msg_helper(
+    view._handle_view_msg_helper(
         {
             "field": "E",
             "filter_info": {
@@ -315,10 +315,10 @@ def test_series_of_text_filters():
     )
 
     # ...and apply a text filter on a different column
-    view._handle_qgrid_msg_helper(
+    view._handle_view_msg_helper(
         {"type": "show_filter_dropdown", "field": "F", "search_val": None}
     )
-    view._handle_qgrid_msg_helper(
+    view._handle_view_msg_helper(
         {
             "field": "F",
             "filter_info": {
@@ -337,8 +337,8 @@ def test_series_of_text_filters():
 def test_date_index():
     df = create_df()
     df.set_index("Date", inplace=True)
-    view = QgridWidget(df=df)
-    view._handle_qgrid_msg_helper(
+    view = SpreadsheetWidget(df=df)
+    view._handle_view_msg_helper(
         {
             "type": "change_filter",
             "field": "A",
@@ -353,13 +353,13 @@ def test_date_index():
 
 
 def test_multi_index():
-    widget = QgridWidget(df=create_multi_index_df())
+    widget = SpreadsheetWidget(df=create_multi_index_df())
     event_history = init_event_history(
         ["filter_dropdown_shown", "filter_changed", "sort_changed"],
         widget=widget,
     )
 
-    widget._handle_qgrid_msg_helper(
+    widget._handle_view_msg_helper(
         {
             "type": "show_filter_dropdown",
             "field": "level_0",
@@ -367,11 +367,11 @@ def test_multi_index():
         }
     )
 
-    widget._handle_qgrid_msg_helper(
+    widget._handle_view_msg_helper(
         {"type": "show_filter_dropdown", "field": 3, "search_val": None}
     )
 
-    widget._handle_qgrid_msg_helper(
+    widget._handle_view_msg_helper(
         {
             "type": "change_filter",
             "field": 3,
@@ -384,7 +384,7 @@ def test_multi_index():
         }
     )
 
-    widget._handle_qgrid_msg_helper(
+    widget._handle_view_msg_helper(
         {
             "type": "change_filter",
             "field": 3,
@@ -397,7 +397,7 @@ def test_multi_index():
         }
     )
 
-    widget._handle_qgrid_msg_helper(
+    widget._handle_view_msg_helper(
         {
             "type": "change_filter",
             "field": "level_1",
@@ -410,11 +410,11 @@ def test_multi_index():
         }
     )
 
-    widget._handle_qgrid_msg_helper(
+    widget._handle_view_msg_helper(
         {"type": "change_sort", "sort_field": 3, "sort_ascending": True}
     )
 
-    widget._handle_qgrid_msg_helper(
+    widget._handle_view_msg_helper(
         {
             "type": "change_sort",
             "sort_field": "level_0",
@@ -467,7 +467,7 @@ def test_set_defaults():
     view = show_grid(df)
     assert_widget_vals_a(view)
 
-    view = QgridWidget(df=df)
+    view = SpreadsheetWidget(df=df)
     assert_widget_vals_a(view)
 
     fake_grid_options_b = {"foo": "buzz"}
@@ -482,7 +482,7 @@ def test_set_defaults():
     view = show_grid(df)
     assert_widget_vals_b(view)
 
-    view = QgridWidget(df=df)
+    view = SpreadsheetWidget(df=df)
     assert_widget_vals_b(view)
 
 
@@ -496,13 +496,13 @@ my_object_vals = [MyObject(MyObject(None)), MyObject(None)]
 
 def test_object_dtype():
     df = pd.DataFrame({"a": my_object_vals}, index=my_object_vals)
-    widget = QgridWidget(df=df)
+    widget = SpreadsheetWidget(df=df)
     grid_data = json.loads(widget._df_json)["data"]
 
-    widget._handle_qgrid_msg_helper(
+    widget._handle_view_msg_helper(
         {"type": "show_filter_dropdown", "field": "a", "search_val": None}
     )
-    widget._handle_qgrid_msg_helper(
+    widget._handle_view_msg_helper(
         {
             "field": "a",
             "filter_info": {
@@ -530,7 +530,7 @@ def test_index_categorical():
     df = pd.DataFrame({"foo": np.random.randn(3), "future_index": [22, 13, 87]})
     df["future_index"] = df["future_index"].astype("category")
     df = df.set_index("future_index")
-    widget = QgridWidget(df=df)
+    widget = SpreadsheetWidget(df=df)
     grid_data = json.loads(widget._df_json)["data"]
 
     assert not isinstance(grid_data[0]["future_index"], dict)
@@ -544,10 +544,10 @@ def test_object_dtype_categorical():
     assert not isinstance(constraints_enum[0], dict)
     assert not isinstance(constraints_enum[1], dict)
 
-    widget._handle_qgrid_msg_helper(
+    widget._handle_view_msg_helper(
         {"type": "show_filter_dropdown", "field": 0, "search_val": None}
     )
-    widget._handle_qgrid_msg_helper(
+    widget._handle_view_msg_helper(
         {
             "field": 0,
             "filter_info": {
@@ -564,10 +564,10 @@ def test_object_dtype_categorical():
 
 
 def test_change_viewport():
-    widget = QgridWidget(df=create_large_df())
+    widget = SpreadsheetWidget(df=create_large_df())
     event_history = init_event_history(All)
 
-    widget._handle_qgrid_msg_helper(
+    widget._handle_view_msg_helper(
         {"type": "change_viewport", "top": 7124, "bottom": 7136}
     )
 
@@ -582,10 +582,10 @@ def test_change_viewport():
 
 
 def test_change_filter_viewport():
-    widget = QgridWidget(df=create_large_df())
+    widget = SpreadsheetWidget(df=create_large_df())
     event_history = init_event_history(All)
 
-    widget._handle_qgrid_msg_helper(
+    widget._handle_view_msg_helper(
         {
             "type": "show_filter_dropdown",
             "field": "B (as str)",
@@ -593,7 +593,7 @@ def test_change_filter_viewport():
         }
     )
 
-    widget._handle_qgrid_msg_helper(
+    widget._handle_view_msg_helper(
         {
             "type": "change_filter_viewport",
             "field": "B (as str)",
@@ -602,7 +602,7 @@ def test_change_filter_viewport():
         }
     )
 
-    widget._handle_qgrid_msg_helper(
+    widget._handle_view_msg_helper(
         {
             "type": "change_filter_viewport",
             "field": "B (as str)",
@@ -629,13 +629,13 @@ def test_change_filter_viewport():
 
 
 def test_change_selection():
-    widget = QgridWidget(df=create_large_df(size=10))
+    widget = SpreadsheetWidget(df=create_large_df(size=10))
     event_history = init_event_history("selection_changed", widget=widget)
 
-    widget._handle_qgrid_msg_helper({"type": "change_selection", "rows": [5]})
+    widget._handle_view_msg_helper({"type": "change_selection", "rows": [5]})
     assert widget._selected_rows == [5]
 
-    widget._handle_qgrid_msg_helper({"type": "change_selection", "rows": [7, 8]})
+    widget._handle_view_msg_helper({"type": "change_selection", "rows": [7, 8]})
     assert widget._selected_rows == [7, 8]
 
     widget.change_selection([3, 5, 6])
@@ -680,7 +680,7 @@ def test_add_row():
     df = pd.DataFrame({"foo": ["hello"], "bar": ["world"], "baz": [42], "boo": [57]})
     df.set_index("baz", inplace=True, drop=True)
 
-    q = QgridWidget(df=df)
+    q = SpreadsheetWidget(df=df)
 
     new_row = [
         ("baz", 43),
@@ -705,7 +705,7 @@ def test_remove_row():
     event_history = init_event_history(All)
     df = create_df()
 
-    widget = QgridWidget(df=df)
+    widget = SpreadsheetWidget(df=df)
     widget.remove_row(rows=[2])
 
     assert 2 not in widget._df.index
@@ -726,7 +726,7 @@ def test_edit_cell():
     df = pd.DataFrame({"foo": ["hello"], "bar": ["world"], "baz": [42], "boo": [57]})
     df.set_index("baz", inplace=True, drop=True)
 
-    q = QgridWidget(df=df)
+    q = SpreadsheetWidget(df=df)
     event_history = init_event_history(All)
 
     q.edit_cell(42, "foo", "hola")
