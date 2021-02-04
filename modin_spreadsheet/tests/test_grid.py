@@ -1,4 +1,9 @@
-from modin_spreadsheet import SpreadsheetWidget, set_defaults, show_grid, on as widget_on
+from modin_spreadsheet import (
+    SpreadsheetWidget,
+    set_defaults,
+    show_grid,
+    on as widget_on,
+)
 from traitlets import All
 import numpy as np
 

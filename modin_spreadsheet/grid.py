@@ -2014,4 +2014,3 @@ class SpreadsheetWidget(widgets.DOMWidget):
 
     def reset_filters(self):
         self.send({"type": "reset_filters"})
-
