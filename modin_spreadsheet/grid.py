@@ -139,10 +139,10 @@ def set_defaults(
     show_toolbar=None, precision=None, grid_options=None, column_options=None
 ):
     """
-    Set the default modin_spreadsheet options.  The options that you can set here are the
+    Set the default modin-spreadsheet options.  The options that you can set here are the
     same ones that you can pass into ``SpreadsheetWidget`` constructor, with the
     exception of the ``df`` option, for which a default value wouldn't be
-    particularly useful (since the purpose of modin_spreadsheet is to display a DataFrame).
+    particularly useful (since the purpose of modin-spreadsheet is to display a DataFrame).
 
     See the documentation for ``SpreadsheetWidget`` for more information.
 
@@ -169,7 +169,7 @@ def set_defaults(
 
 def on(names, handler):
     """
-    Setup a handler to be called when a user interacts with any modin_spreadsheet instance.
+    Setup a handler to be called when a user interacts with any modin-spreadsheet instance.
 
     Parameters
     ----------
@@ -198,7 +198,7 @@ def on(names, handler):
     ``instance_create`` event.  This event is only available at the
     module-level and not on individual SpreadsheetWidget instances.
 
-    The reason it's not available on individual qgrid instances is because
+    The reason it's not available on individual modin-spreadsheet instances is because
     the only time it fires is when a new instance is created. This means
     it's already done firing by the time a user has a chance to hook up any
     event listeners.
@@ -236,7 +236,7 @@ def on(names, handler):
 
 def off(names, handler):
     """
-    Remove a qgrid event handler that was registered with the ``on`` method.
+    Remove a modin-spreadsheet event handler that was registered with the ``on`` method.
 
     Parameters
     ----------
@@ -284,15 +284,15 @@ def _display_as_spreadsheet(data):
 
 def enable(dataframe=True, series=True):
     """
-    Automatically use qgrid to display all DataFrames and/or Series
+    Automatically use modin-spreadsheet to display all DataFrames and/or Series
     instances in the notebook.
 
     Parameters
     ----------
     dataframe : bool
-        Whether to automatically use qgrid to display DataFrames instances.
+        Whether to automatically use modin-spreadsheet to display DataFrames instances.
     series : bool
-        Whether to automatically use qgrid to display Series instances.
+        Whether to automatically use modin-spreadsheet to display Series instances.
     """
     try:
         from IPython.core.getipython import get_ipython
@@ -315,7 +315,7 @@ def enable(dataframe=True, series=True):
 
 def disable():
     """
-    Stop using qgrid to display DataFrames and Series instances in the
+    Stop using modin-spreadsheet to display DataFrames and Series instances in the
     notebook.  This has the same effect as calling ``enable`` with both
     kwargs set to ``False`` (and in fact, that's what this function does
     internally).
@@ -333,7 +333,7 @@ def show_grid(
     row_edit_callback=None,
 ):
     """
-    Renders a DataFrame or Series as an interactive qgrid, represented by
+    Renders a DataFrame or Series as an interactive spreadsheet, represented by
     an instance of the ``SpreadsheetWidget`` class.  The ``SpreadsheetWidget`` instance
     is constructed using the options passed in to this function.  The
     ``data_frame`` argument to this function is used as the ``df`` kwarg in
@@ -403,7 +403,7 @@ def show_grid(
             'autoEdit': False,
             'explicitInitialization': True,
 
-            # Qgrid options
+            # Modin-spreadsheet options
             'maxVisibleRows': 15,
             'minVisibleRows': 8,
             'sortable': True,
@@ -417,15 +417,15 @@ def show_grid(
     <https://github.com/mleibman/SlickGrid/wiki/Grid-Options>`_.
 
     The second group of option are options that were added specifically
-    for Qgrid and therefore are not documented in the SlickGrid documentation.
+    for modin-spreadsheet and therefore are not documented in the SlickGrid documentation.
     The following bullet points describe these options.
 
-    * **maxVisibleRows** The maximum number of rows that Qgrid will show.
-    * **minVisibleRows** The minimum number of rows that Qgrid will show
-    * **sortable** Whether the Qgrid instance will allow the user to sort
+    * **maxVisibleRows** The maximum number of rows that modin-spreadsheet will show.
+    * **minVisibleRows** The minimum number of rows that modin-spreadsheet will show
+    * **sortable** Whether the modin-spreadsheet instance will allow the user to sort
       columns by clicking the column headers. When this is set to ``False``,
       nothing will happen when users click the column headers.
-    * **filterable** Whether the Qgrid instance will allow the user to filter
+    * **filterable** Whether the modin-spreadsheet instance will allow the user to filter
       the grid. When this is set to ``False`` the filter icons won't be shown
       for any columns.
     * **highlightSelectedCell** If you set this to True, the selected cell
@@ -446,7 +446,7 @@ def show_grid(
             'toolTip': "",
             'width': None
 
-            # Qgrid column options
+            # Modin-spreadsheet column options
             'editable': True,
         }
 
@@ -454,7 +454,7 @@ def show_grid(
     described in the `SlickGrid documentation
     <https://github.com/mleibman/SlickGrid/wiki/Column-Options>`_.
 
-    The ``editable`` option was added specifically for Qgrid and therefore is
+    The ``editable`` option was added specifically for modin-spreadsheet and therefore is
     not documented in the SlickGrid documentation.  This option specifies
     whether a column should be editable or not.
 
@@ -465,7 +465,7 @@ def show_grid(
                    and ``column_definitions`` parameters, since those
                    depend on the particular set of data being shown by an
                    instance, and therefore aren't parameters we would want
-                   to set for all QgridWidet instances.
+                   to set for all SpreadsheetWidget instances.
     set_grid_option : Permanently set global defaults for individual
                       grid options.  Does so by changing the defaults
                       that the ``show_grid`` method uses for the
@@ -547,7 +547,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
     --------
     show_grid : The method that should be used to construct SpreadsheetWidget
                 instances, because it provides reasonable defaults for all
-                of the qgrid options.
+                of the modin-spreadsheet options.
 
     Attributes
     ----------
@@ -657,8 +657,8 @@ class SpreadsheetWidget(widgets.DOMWidget):
             str, the handler will apply just the event with that name.
         handler : callable
             A callable that is called when the event occurs. Its
-            signature should be ``handler(event, qgrid_widget)``, where
-            ``event`` is a dictionary and ``qgrid_widget`` is the SpreadsheetWidget
+            signature should be ``handler(event, spreadsheet_widget)``, where
+            ``event`` is a dictionary and ``spreadsheet_widget`` is the SpreadsheetWidget
             instance that fired the event. The ``event`` dictionary at least
             holds a ``name`` key which specifies the name of the event that
             occurred.
@@ -791,7 +791,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
 
     def off(self, names, handler):
         """
-        Remove a qgrid event handler that was registered with the current
+        Remove a modin-spreadsheet event handler that was registered with the current
         instance's ``on`` method.
 
         Parameters
