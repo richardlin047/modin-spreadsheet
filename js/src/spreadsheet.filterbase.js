@@ -1,11 +1,11 @@
 var $ = require('jquery');
 
 class FilterBase {
-  constructor(field, column_type, qgrid) {
+  constructor(field, column_type, modin_spreadsheet) {
     this.field = field;
     this.column_type = column_type;
-    this.qgrid = qgrid;
-    this.widget_model = qgrid.model;
+    this.modin_spreadsheet = modin_spreadsheet;
+    this.widget_model = modin_spreadsheet.model;
     if (this.widget_model) {
       this.precision = this.widget_model.get('precision');
     }
@@ -15,7 +15,7 @@ class FilterBase {
   handle_msg(msg) {
     var column_info = msg.col_info;
     if (msg.type == 'column_min_max_updated'){
-      this.update_min_max(column_info, this.qgrid.has_active_filter());
+      this.update_min_max(column_info, this.modin_spreadsheet.has_active_filter());
     }
   }
 
@@ -115,7 +115,7 @@ class FilterBase {
       this.create_error_msg();
     }
 
-    this.filter_elem.appendTo(this.column_header_elem.closest(".q-grid-container")).show();
+    this.filter_elem.appendTo(this.column_header_elem.closest(".spreadsheet-container")).show();
 
     // position the dropdown
     var top = this.filter_btn.offset().top + this.filter_btn.height();
@@ -125,8 +125,8 @@ class FilterBase {
     this.filter_elem.width(filter_width);
     var elem_right = left + filter_width;
 
-    var qgrid_area = this.filter_elem.closest('.q-grid-container');
-    if (elem_right > qgrid_area.offset().left + qgrid_area.width()) {
+    var container_area = this.filter_elem.closest('.spreadsheet-container');
+    if (elem_right > container_area.offset().left + container_area.width()) {
       left = (this.filter_btn.offset().left + this.filter_btn.width()) - filter_width;
     }
 

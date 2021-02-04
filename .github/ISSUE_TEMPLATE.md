@@ -2,8 +2,8 @@
 
 * Operating System:
 * Python Version: `$ python --version`
-* How did you install Qgrid: (`pip`, `conda`, or `other (please explain)`)
-* Python packages: `$ pip freeze` or `$ conda list` (please include qgrid, notebook, and jupyterlab versions)
+* How did you install modin-spreadsheet: (`pip`, `conda`, or `other (please explain)`)
+* Python packages: `$ pip freeze` or `$ conda list` (please include modin-spreadsheet, notebook, and jupyterlab versions)
 * Jupyter lab packages (if applicable): `$ jupyter labextension list`
 
 ### Description of Issue

@@ -1,13 +1,13 @@
 var $ = require('jquery');
 var _ = require('underscore');
-var filter_base = require('./qgrid.filterbase.js');
+var filter_base = require('./spreadsheet.filterbase.js');
 
 class TextFilter extends filter_base.FilterBase {
 
   get_filter_html() {
     return `
-      <div class='text-filter grid-filter qgrid-dropdown-menu'>
-        <h3 class='qgrid-popover-title'>
+      <div class='text-filter grid-filter spreadsheet-dropdown-menu'>
+        <h3 class='spreadsheet-popover-title'>
           <div class='dropdown-title'>Filter by ${this.field}</div>
           <i class='fa fa-times icon-remove close-button'></i>
         </h3>
@@ -163,9 +163,9 @@ class TextFilter extends filter_base.FilterBase {
     // Subtract 110 from viewport height to account for the height of the header + search box + footer
     // of the filter control.  This value can't be calculated dynamically because the filter control
     // hasn't been shown yet.
-    var qgrid_viewport_height = this.column_header_elem.closest('.slick-header').siblings('.slick-viewport').height() - 115;
-    if (qgrid_viewport_height < max_height) {
-      max_height = qgrid_viewport_height;
+    var grid_viewport_height = this.column_header_elem.closest('.slick-header').siblings('.slick-viewport').height() - 115;
+    if (grid_viewport_height < max_height) {
+      max_height = grid_viewport_height;
     }
 
     var grid_height = max_height;

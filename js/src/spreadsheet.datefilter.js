@@ -1,12 +1,12 @@
 var $ = require('jquery');
-var filter_base = require('./qgrid.filterbase.js');
+var filter_base = require('./spreadsheet.filterbase.js');
 
 class DateFilter extends filter_base.FilterBase {
 
   get_filter_html() {
     return `
-      <div class='date-range-filter grid-filter qgrid-dropdown-menu'>
-        <h3 class='qgrid-popover-title'>
+      <div class='date-range-filter grid-filter spreadsheet-dropdown-menu'>
+        <h3 class='spreadsheet-popover-title'>
           <div class='dropdown-title'>Filter by ${this.field}</div>
           <i class='fa fa-times icon-remove close-button'></i>
         </h3>
@@ -73,7 +73,7 @@ class DateFilter extends filter_base.FilterBase {
       beforeShow: (input, inst) => {
         // align the datepicker with the right edge of the input it drops down from
         var clicked_elem = $(inst);
-        clicked_elem.closest(".qgrid-dropdown-menu").addClass("calendar-open");
+        clicked_elem.closest(".spreadsheet-dropdown-menu").addClass("calendar-open");
 
         var widget = clicked_elem.datepicker('widget');
         widget.css('margin-left', $(input).outerWidth() - widget.outerWidth());

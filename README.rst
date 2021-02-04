@@ -4,10 +4,10 @@
     :align: center
     :alt: qgrid
 
-=====
-qgrid
-=====
-Qgrid is a Jupyter notebook widget which uses `SlickGrid <https://github.com/mleibman/SlickGrid>`_ to render pandas
+=================
+modin-spreadsheet
+=================
+Modin-spreadsheet is a Jupyter notebook widget which uses `SlickGrid <https://github.com/mleibman/SlickGrid>`_ to render pandas
 DataFrames within a Jupyter notebook. This allows you to explore your DataFrames with intuitive scrolling, sorting, and
 filtering controls, as well as edit your DataFrames by double clicking cells.
 
@@ -44,7 +44,7 @@ Click the following badge to try out qgrid in Jupyterlab, also using binder:
 
 *The binder demos generally will be using the most recent stable release of qgrid, so features that were added in a recent beta version may not be available in those demos.*
 
-For people who would rather not go to another page to try out qgrid for real, here's the tldr; version:
+For people who would rather not go to another page to try out modin-spreadsheet for real, here's the tldr; version:
 
         .. figure:: docs/images/filtering_demo.gif
          :align: left
@@ -62,8 +62,8 @@ Installation
 
 Installing with pip::
 
-  pip install qgrid
-  jupyter nbextension enable --py --sys-prefix qgrid
+  pip install modin-spreadsheet
+  jupyter nbextension enable --py --sys-prefix modin_spreadsheet
 
   # only required if you have not enabled the ipywidgets nbextension yet
   jupyter nbextension enable --py --sys-prefix widgetsnbextension
@@ -73,26 +73,26 @@ Installing with conda::
   # only required if you have not added conda-forge to your channels yet
   conda config --add channels conda-forge
 
-  conda install qgrid
+  conda install modin_spreadsheet
 
 Jupyterlab Installation
 -----------------------
 
-First, go through the normal installation steps above as you normally would when using qgrid in the notebook.
+First, go through the normal installation steps above as you normally would when using modin-spreadsheet in the notebook.
 If you haven't already install jupyterlab and enabled ipywidgets, do that first with the following lines::
 
   pip install jupyterlab
   jupyter labextension install @jupyter-widgets/jupyterlab-manager
 
-Install the qgrid-jupyterlab extension and enable::
+Install the modin_spreadsheet jupyterlab extension and enable::
 
-  jupyter labextension install qgrid2
+  jupyter labextension install modin_spreadsheet
 
 At this point if you run jupyter lab normally with the 'jupyter lab' command, you should be
-able to use qgrid in notebooks as you normally would.
+able to use modin-spreadsheet in notebooks as you normally would.
 
 *Please Note: Jupyterlab support has been tested with jupyterlab 0.30.5 and jupyterlab-manager 0.31.3, so if you're
-having trouble, try installing those versions. Feel free to file an issue if you find that qgrid isn't working
+having trouble, try installing those versions. Feel free to file an issue if you find that modin-spreadsheet isn't working
 with a newer version of either dependency.*
 
 What's New
@@ -192,13 +192,13 @@ qgrid-notebooks repository and open a demo notebook:
 Running from source & testing your changes
 ------------------------------------------
 
-If you'd like to contribute to qgrid, or just want to be able to modify the source code for your own purposes, you'll
-want to clone this repository and run qgrid from your local copy of the repository.  The following steps explain how
+If you'd like to contribute to modin-spreadsheet, or just want to be able to modify the source code for your own purposes, you'll
+want to clone this repository and run modin-spreadsheet from your local copy of the repository.  The following steps explain how
 to do this.
 
 #. Clone the repository from GitHub and ``cd`` into the top-level directory::
 
-    git clone https://github.com/quantopian/qgrid.git
+    git clone https://github.com/modin-project/qgrid.git
     cd qgrid
 
 #. Install the current project in `editable <https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs>`_
@@ -206,13 +206,13 @@ to do this.
 
     pip install -e .
 
-#. Install the node packages that qgrid depends on and build qgrid's javascript using webpack::
+#. Install the node packages that modin-spreadsheet depends on and build modin-spreadsheet's javascript using webpack::
 
     cd js && npm install .
 
-#. Install and enable qgrid's javascript in your local jupyter notebook environment::
+#. Install and enable modin-spreadsheet's javascript in your local jupyter notebook environment::
 
-    jupyter nbextension install --py --symlink --sys-prefix qgrid && jupyter nbextension enable --py --sys-prefix qgrid
+    jupyter nbextension install --py --symlink --sys-prefix modin_spreadsheet && jupyter nbextension enable --py --sys-prefix modin_spreadsheet
 
 #. If desired, install the labextension::
 
@@ -224,12 +224,12 @@ to do this.
 
 Manually testing server-side changes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-If the code you need to change is in qgrid's python code, then restart the kernel of the notebook you're in and
-rerun any qgrid cells to see your changes take effect.
+If the code you need to change is in modin-spreadsheet's python code, then restart the kernel of the notebook you're in and
+rerun any modin-spreadsheet cells to see your changes take effect.
 
 Manually testing client-side changes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-If the code you need to change is in qgrid's javascript or css code, repeat step 3 to rebuild qgrid's npm package,
+If the code you need to change is in modin-spreadsheet's javascript or css code, repeat step 3 to rebuild modin-spreadsheet's npm package,
 then refresh the browser tab where you're viewing your notebook to see your changes take effect.
 
 Running automated tests
@@ -250,11 +250,11 @@ you open the ``index.html`` file in your browser, you should be able to preview 
 
 Events API
 ----------
-As of qgrid 1.0.3 there are new ``on`` and ``off`` methods in qgrid which can be used to attach/detach event handlers. They're available on both the ``qgrid`` module (see `qgrid.on <https://qgrid.readthedocs.io/en/latest/#qgrid.on>`_), and on individual QgridWidget instances (see `qgrid.QgridWidget.on <https://qgrid.readthedocs.io/en/latest/#qgrid.QgridWidget.on>`_). Previously the only way to listen for events was to use undocumented parts of the API.
+As of qgrid 1.0.3 there are new ``on`` and ``off`` methods in qgrid which can be used to attach/detach event handlers. They're available on both the ``modin_spreadsheet`` module (see `qgrid.on <https://qgrid.readthedocs.io/en/latest/#qgrid.on>`_), and on individual SpreadsheetWidget instances (see `qgrid.QgridWidget.on <https://qgrid.readthedocs.io/en/latest/#qgrid.QgridWidget.on>`_). Previously the only way to listen for events was to use undocumented parts of the API.
 
-Having the ability to attach event handlers allows us to do some interesting things in terms of using qgrid in conjunction with other widgets/visualizations. One example is using qgrid to filter a DataFrame that's also being displayed by another visualization.
+Having the ability to attach event handlers allows us to do some interesting things in terms of using modin-spreadsheet in conjunction with other widgets/visualizations. One example is using modin-spreadsheet to filter a DataFrame that's also being displayed by another visualization.
 
-If you previously used the ``observe`` method to respond to qgrid events, lets see how your code might be updated to use the new ``on`` method::
+If you previously used the ``observe`` method to respond to modin-spreadsheet events, lets see how your code might be updated to use the new ``on`` method::
 
     # Before upgrading to 1.0.3
     def handle_df_change(change):
@@ -276,16 +276,16 @@ See the `events notebook <https://mybinder.org/v2/gh/quantopian/qgrid-notebooks/
 
 For people who would rather not go to another page to try out the events notebook, here are a couple of gifs to give you an idea of what you can do with it.
 
-The first gif shows how you can use qgrid to filter the data that's being shown by a matplotlib scatter plot:
+The first gif shows how you can use modin-spreadsheet to filter the data that's being shown by a matplotlib scatter plot:
 
         .. figure:: docs/images/linked_to_scatter.gif
          :align: left
          :target: docs/images/linked_to_scatter.gif
          :width: 600px
 
-          A brief demo showing qgrid hooked up to a matplotlib plot
+          A brief demo showing modin-spreadsheet hooked up to a matplotlib plot
 
-The second gif shows how you can move qgrid to a separate view in JupyterLab, which makes it more convenient
+The second gif shows how you can move modin-spreadsheet to a separate view in JupyterLab, which makes it more convenient
 to use in conjunction with other visualizations (in this case, a couple of ``Output`` widgets):
 
         .. figure:: docs/images/events_api.gif
@@ -293,7 +293,7 @@ to use in conjunction with other visualizations (in this case, a couple of ``Out
          :target: docs/images/events_api.gif
          :width: 600px
 
-          A brief demo showing qgrid's events api
+          A brief demo showing modin-spreadsheet's events api
 
 Continuing to use qgrid 0.3.3
 -----------------------------
@@ -316,9 +316,9 @@ qgrid 1.0.
 Contributing
 ------------
 All contributions, bug reports, bug fixes, documentation improvements, enhancements, and ideas are welcome. See the
-`Running from source & testing your changes`_ section above for more details on local qgrid development.
+`Running from source & testing your changes`_ section above for more details on local modin-spreadsheet development.
 
-If you are looking to start working with the qgrid codebase, navigate to the GitHub issues tab and start looking
+If you are looking to start working with the modin-spreadsheet codebase, navigate to the GitHub issues tab and start looking
 through interesting issues.
 
 Feel free to ask questions by submitting an issue with your question.
