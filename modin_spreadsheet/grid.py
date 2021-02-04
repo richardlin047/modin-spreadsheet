@@ -139,24 +139,24 @@ def set_defaults(
     show_toolbar=None, precision=None, grid_options=None, column_options=None
 ):
     """
-    Set the default qgrid options.  The options that you can set here are the
-    same ones that you can pass into ``QgridWidget`` constructor, with the
+    Set the default modin_spreadsheet options.  The options that you can set here are the
+    same ones that you can pass into ``SpreadsheetWidget`` constructor, with the
     exception of the ``df`` option, for which a default value wouldn't be
-    particularly useful (since the purpose of qgrid is to display a DataFrame).
+    particularly useful (since the purpose of modin_spreadsheet is to display a DataFrame).
 
-    See the documentation for ``QgridWidget`` for more information.
+    See the documentation for ``SpreadsheetWidget`` for more information.
 
     Notes
     -----
     This function will be useful to you if you find yourself
-    setting the same options every time you create a QgridWidget. Calling
+    setting the same options every time you create a SpreadsheetWidget. Calling
     this ``set_defaults`` function once sets the options for the lifetime of
     the kernel, so you won't have to include the same options every time you
-    instantiate a ``QgridWidget``.
+    instantiate a ``SpreadsheetWidget``.
 
     See Also
     --------
-    QgridWidget :
+    SpreadsheetWidget :
         The widget whose default behavior is changed by ``set_defaults``.
     """
     defaults.set_defaults(
@@ -169,7 +169,7 @@ def set_defaults(
 
 def on(names, handler):
     """
-    Setup a handler to be called when a user interacts with any qgrid instance.
+    Setup a handler to be called when a user interacts with any modin_spreadsheet instance.
 
     Parameters
     ----------
@@ -179,15 +179,15 @@ def on(names, handler):
         str, the handler will apply just the event with that name.
     handler : callable
         A callable that is called when the event occurs. Its
-        signature should be ``handler(event, qgrid_widget)``, where
-        ``event`` is a dictionary and ``qgrid_widget`` is the QgridWidget
+        signature should be ``handler(event, spreadsheet_widget)``, where
+        ``event`` is a dictionary and ``spreadsheet_widget`` is the SpreadsheetWidget
         instance that fired the event. The ``event`` dictionary at least
         holds a ``name`` key which specifies the name of the event that
         occurred.
 
     Notes
     -----
-    There is also an ``on`` method on each individual QgridWidget instance,
+    There is also an ``on`` method on each individual SpreadsheetWidget instance,
     which works exactly like this one except it only listens for events on an
     individual instance (whereas this module-level method listens for events
     on all instances).
@@ -196,7 +196,7 @@ def on(names, handler):
     that can be listened to via this module-level ``on`` method.  Both
     methods support the same events with one exception: the
     ``instance_create`` event.  This event is only available at the
-    module-level and not on individual QgridWidget instances.
+    module-level and not on individual SpreadsheetWidget instances.
 
     The reason it's not available on individual qgrid instances is because
     the only time it fires is when a new instance is created. This means
@@ -222,9 +222,9 @@ def on(names, handler):
 
     See Also
     --------
-    QgridWidget.on :
+    SpreadsheetWidget.on :
         Same as this ``on`` method except it listens for events on an
-        individual QgridWidget instance rather than on all instances.  See
+        individual SpreadsheetWidget instance rather than on all instances.  See
         this method for a list of all the types of events that can be
         listened for via either ``on`` method.
     off:
@@ -334,23 +334,23 @@ def show_grid(
 ):
     """
     Renders a DataFrame or Series as an interactive qgrid, represented by
-    an instance of the ``QgridWidget`` class.  The ``QgridWidget`` instance
+    an instance of the ``SpreadsheetWidget`` class.  The ``SpreadsheetWidget`` instance
     is constructed using the options passed in to this function.  The
     ``data_frame`` argument to this function is used as the ``df`` kwarg in
-    call to the QgridWidget constructor, and the rest of the parameters
+    call to the SpreadsheetWidget constructor, and the rest of the parameters
     are passed through as is.
 
     If the ``data_frame`` argument is a Series, it will be converted to a
-    DataFrame before being passed in to the QgridWidget constructor as the
+    DataFrame before being passed in to the SpreadsheetWidget constructor as the
     ``df`` kwarg.
 
-    :rtype: QgridWidget
+    :rtype: SpreadsheetWidget
 
     Parameters
     ----------
     data_frame : DataFrame
         The DataFrame that will be displayed by this instance of
-        QgridWidget.
+        SpreadsheetWidget.
     grid_options : dict
         Options to use when creating the SlickGrid control (i.e. the
         interactive grid).  See the Notes section below for more information
@@ -470,7 +470,7 @@ def show_grid(
                       grid options.  Does so by changing the defaults
                       that the ``show_grid`` method uses for the
                       ``grid_options`` parameter.
-    QgridWidget : The widget class that is instantiated and returned by this
+    SpreadsheetWidget : The widget class that is instantiated and returned by this
                   method.
 
     """
@@ -545,7 +545,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
 
     See Also
     --------
-    show_grid : The method that should be used to construct QgridWidget
+    show_grid : The method that should be used to construct SpreadsheetWidget
                 instances, because it provides reasonable defaults for all
                 of the qgrid options.
 
@@ -658,14 +658,14 @@ class SpreadsheetWidget(widgets.DOMWidget):
         handler : callable
             A callable that is called when the event occurs. Its
             signature should be ``handler(event, qgrid_widget)``, where
-            ``event`` is a dictionary and ``qgrid_widget`` is the QgridWidget
+            ``event`` is a dictionary and ``qgrid_widget`` is the SpreadsheetWidget
             instance that fired the event. The ``event`` dictionary at least
             holds a ``name`` key which specifies the name of the event that
             occurred.
 
         Notes
         -----
-        Here's the list of events that you can listen to on QgridWidget
+        Here's the list of events that you can listen to on SpreadsheetWidget
         instances via the ``on`` method::
 
             [
@@ -704,7 +704,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
             * **column** The name of the column for which the filter control
               was shown.
 
-        * **json_updated** A user action causes QgridWidget to send rows of
+        * **json_updated** A user action causes SpreadsheetWidget to send rows of
           data (in json format) down to the browser. This happens as a side
           effect of certain actions such as scrolling, sorting, and filtering.
 
@@ -780,9 +780,9 @@ class SpreadsheetWidget(widgets.DOMWidget):
         --------
         on :
             Same as the instance-level ``on`` method except it listens for
-            events on all instances rather than on an individual QgridWidget
+            events on all instances rather than on an individual SpreadsheetWidget
             instance.
-        QgridWidget.off:
+        SpreadsheetWidget.off:
             Unhook a handler that was hooked up using the instance-level
             ``on`` method.
 
@@ -806,7 +806,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
 
         See Also
         --------
-        QgridWidget.on:
+        SpreadsheetWidget.on:
             The method for hooking up instance-level handlers that this
             ``off`` method can remove.
 
@@ -1668,7 +1668,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
     def get_changed_df(self):
         """
         Get a copy of the DataFrame that was used to create the current
-        instance of QgridWidget which reflects the current state of the UI.
+        instance of SpreadsheetWidget which reflects the current state of the UI.
         This includes any sorting or filtering changes, as well as edits
         that have been made by double clicking cells.
 
@@ -1716,7 +1716,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
 
         See Also
         --------
-        QgridWidget.remove_rows:
+        SpreadsheetWidget.remove_rows:
             The method for removing a row (or rows).
         """
         if row is None:
@@ -1851,9 +1851,9 @@ class SpreadsheetWidget(widgets.DOMWidget):
 
         See Also
         --------
-        QgridWidget.add_row:
+        SpreadsheetWidget.add_row:
             The method for adding a row.
-        QgridWidget.remove_row:
+        SpreadsheetWidget.remove_row:
             Alias for this method.
         """
         row_indices = self._remove_rows(rows=rows)
