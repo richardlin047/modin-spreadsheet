@@ -3,3 +3,5 @@ include LICENSE
 include requirements*.txt
 
 recursive-include qgrid/static *.*
+include versioneer.py
+include modin_spreadsheet/_version.py

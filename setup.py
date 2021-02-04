@@ -176,4 +176,6 @@ setup_args = {
     ],
 }
 
-setup(version=versioneer.get_version(), cmdclass=versioneer.get_cmdclass(),**setup_args)
+setup(
+    version=versioneer.get_version(), cmdclass=versioneer.get_cmdclass(), **setup_args
+)
