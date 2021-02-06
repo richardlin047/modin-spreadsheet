@@ -3,7 +3,7 @@
 # IntelliJ IDEA (IDE-related files)
 *.iml
 .idea/*
-.ipynb_checkpoints/*
+.ipynb_checkpoints
 
 # Setuptools.
 dist
