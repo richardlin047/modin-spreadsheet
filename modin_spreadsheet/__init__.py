@@ -1,3 +1,8 @@
+try:
+    import modin.pandas as pd
+except ImportError:
+    raise ImportError("Please run `pip install modin`")
+
 from .grid import (
     enable,
     disable,
