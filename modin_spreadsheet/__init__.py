@@ -1,3 +1,8 @@
+try:
+    import modin.pandas as pd
+except ImportError:
+    raise ImportError("Please run `pip install modin`")
+
 from .grid import (
     enable,
     disable,
@@ -32,11 +37,6 @@ __all__ = [
     "show_grid",
     "SpreadsheetWidget",
 ]
-
-__version__ = get_versions()["version"]
-del get_versions
-
-from ._version import get_versions
 
 __version__ = get_versions()["version"]
 del get_versions

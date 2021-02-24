@@ -163,6 +163,7 @@ setup_args = {
     ],
     "install_requires": reqs,
     "extras_require": extras_require(),
+    "python-requires": ">=3.6.1",
     "packages": find_packages(),
     "zip_safe": False,
     "author": "Modin Maintainers",

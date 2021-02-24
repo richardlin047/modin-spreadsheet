@@ -36,8 +36,8 @@ class ModinSpreadsheetModel extends widgets.DOMWidgetModel {
       _view_name : 'ModinSpreadsheetView',
       _model_module : 'modin_spreadsheet',
       _view_module : 'modin_spreadsheet',
-      _model_module_version : '^0.1.0',
-      _view_module_version : '^0.1.0',
+      _model_module_version : '^0.1.1',
+      _view_module_version : '^0.1.1',
       _df_json: '',
       _columns: {}
     });
