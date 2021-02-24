@@ -1,6 +1,6 @@
 {
   "name": "modin_spreadsheet",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "An implementation for the Spreadsheet API of Modin",
   "author": "Modin Maintainers",
   "main": "src/index.js",

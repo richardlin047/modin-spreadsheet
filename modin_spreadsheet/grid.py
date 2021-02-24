@@ -575,8 +575,8 @@ class SpreadsheetWidget(widgets.DOMWidget):
     _model_name = Unicode("ModinSpreadsheetModel").tag(sync=True)
     _view_module = Unicode("modin_spreadsheet").tag(sync=True)
     _model_module = Unicode("modin_spreadsheet").tag(sync=True)
-    _view_module_version = Unicode("^0.1.0").tag(sync=True)
-    _model_module_version = Unicode("^0.1.0").tag(sync=True)
+    _view_module_version = Unicode("^0.1.1").tag(sync=True)
+    _model_module_version = Unicode("^0.1.1").tag(sync=True)
 
     _df = Union([Instance(pd.DataFrame), Instance(pandas.DataFrame)])
     _df_json = Unicode("", sync=True)
