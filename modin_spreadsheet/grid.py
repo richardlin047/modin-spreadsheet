@@ -1394,14 +1394,14 @@ class SpreadsheetWidget(widgets.DOMWidget):
                     col_series >= pd.to_datetime(filter_info["min"], unit="ms")
                 )
                 self._filter_conditions.append(
-                    f"unfiltered_df['{col_name}'] >= pd.to_datetime({filter_info['min']}, unit='ms'"
+                    f"unfiltered_df['{col_name}'] >= pd.to_datetime({filter_info['min']}, unit='ms')"
                 )
             if filter_info["max"] is not None:
                 conditions.append(
                     col_series <= pd.to_datetime(filter_info["max"], unit="ms")
                 )
                 self._filter_conditions.append(
-                    f"unfiltered_df['{col_name}'] <= pd.to_datetime({filter_info['max']}, unit='ms'"
+                    f"unfiltered_df['{col_name}'] <= pd.to_datetime({filter_info['max']}, unit='ms')"
                 )
         elif filter_info["type"] == "boolean":
             if filter_info["selected"] is not None:
@@ -1517,7 +1517,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
                 self._df.loc[location] = val_to_set
                 # Record cell edit
                 self._record_transformation(
-                    f"# Edit cell\n" f"df.loc[{location}]={val_to_set}"
+                    f"# Edit cell\n" f"df.loc[{location}]={repr(val_to_set)}"
                 )
 
                 query = (
