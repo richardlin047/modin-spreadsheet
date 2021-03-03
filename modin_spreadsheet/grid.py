@@ -630,7 +630,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
         if self.df is not None:
             self._update_df()
 
-        self._history = []
+        self._history = ["unfiltered_df = df.copy()"]
         self._view_msgs = []
         self._history_metadata_tag = "modin_spreadsheet" + str(uuid4())
         self._resetting_filters = False
@@ -1517,7 +1517,9 @@ class SpreadsheetWidget(widgets.DOMWidget):
                 self._df.loc[location] = val_to_set
                 # Record cell edit
                 self._record_transformation(
-                    f"# Edit cell\n" f"df.loc[{location}]={repr(val_to_set)}"
+                    f"# Edit cell\n"
+                    f"df.loc[{location}]={repr(val_to_set)}\n"
+                    f"unfiltered_df.loc[{location}]={repr(val_to_set)}"
                 )
 
                 query = (
@@ -1756,7 +1758,8 @@ class SpreadsheetWidget(widgets.DOMWidget):
         self._record_transformation(
             f"# Add row\n"
             f"last = df.loc[max(df.index)].copy()\n"
-            f"df.loc[last.name+1] = last.values"
+            f"df.loc[last.name+1] = last.values\n"
+            f"unfiltered_df.loc[last.name+1] = last.values"
         )
         return last.name
 
@@ -1883,7 +1886,9 @@ class SpreadsheetWidget(widgets.DOMWidget):
         self._update_table(triggered_by="remove_row")
         # Record remove rows
         self._record_transformation(
-            f"# Remove rows\n" f"df.drop({selected_names}, inplace=True)"
+            f"# Remove rows\n"
+            f"df.drop({selected_names}, inplace=True)\n"
+            f"unfiltered_df.drop({selected_names}, inplace=True)"
         )
         return selected_names
 
@@ -1977,7 +1982,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
         return self._history
 
     def clear_history(self, from_api=True):
-        self._history = []
+        self._history = ["unfiltered_df = df.copy()"]
         source = "api" if from_api else "gui"
         self._notify_listeners({"name": "history_cleared", "source": source})
         self._update_history_cell()
