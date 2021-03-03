@@ -1012,7 +1012,6 @@ def test_apply_history():
         'type': 'edit_cell'}
     )
 
-    
     spreadsheet._handle_view_msg_helper( 
         {'type': 'change_filter',
         'field': 'Date',
