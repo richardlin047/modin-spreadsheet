@@ -758,11 +758,12 @@ def test_edit_cell():
 def test_get_history():
     spreadsheet = SpreadsheetWidget(df=create_df())
 
+    # Initial history
     last_history = spreadsheet.get_history()[-1]
     expected_history = "unfiltered_df = df.copy()"
     assert last_history == expected_history
 
-    # EDIT_CELL
+    # Edit cell
     spreadsheet._handle_view_msg_helper(
         {
             "column": "A",
@@ -772,7 +773,6 @@ def test_get_history():
             "value": "hello world",
         }
     )
-
     last_history = spreadsheet.get_history()[-1]
     expected_history = "# Edit cell\ndf.loc[(0, 'A')]='hello world'\nunfiltered_df.loc[(0, 'A')]='hello world'"
     assert last_history == expected_history
@@ -786,23 +786,21 @@ def test_get_history():
             "type": "edit_cell",
         },
     )
-
     last_history = spreadsheet.get_history()[-1]
     expected_history = "# Edit cell\ndf.loc[(0, 'Date')]=Timestamp('2013-01-10 00:00:00')\nunfiltered_df.loc[(0, 'Date')]=Timestamp('2013-01-10 00:00:00')"
     assert last_history == expected_history
 
-    # REMOVE_ROW
+    # Remove row
     spreadsheet._handle_view_msg_helper(
         {"type": "remove_row"},
     )
-
     last_history = spreadsheet.get_history()[-1]
     expected_history = (
         "# Remove rows\ndf.drop([], inplace=True)\nunfiltered_df.drop([], inplace=True)"
     )
     assert last_history == expected_history
 
-    # CHANGE_SELECTION
+    # Change selection
     spreadsheet._handle_view_msg_helper(
         {"rows": [], "type": "change_selection"},
     )
@@ -812,26 +810,25 @@ def test_get_history():
     spreadsheet._handle_view_msg_helper(
         {"rows": [1, 2, 3], "type": "change_selection"},
     )
-
+    # History should not be changed
     last_history = spreadsheet.get_history()[-1]
     assert last_history == expected_history
 
-    # CHANGE_VIEWPORT
+    # Change viewport
     spreadsheet._handle_view_msg_helper(
         {"type": "change_viewport", "top": 7124, "bottom": 7136}
     )
-
+    # History should not be changed
     last_history = spreadsheet.get_history()[-1]
     assert last_history == expected_history
 
-    # ADD_ROW
+    # Add row
     spreadsheet._handle_view_msg_helper({"type": "add_row"})
-
     last_history = spreadsheet.get_history()[-1]
     expected_history = "# Add row\nlast = df.loc[max(df.index)].copy()\ndf.loc[last.name+1] = last.values\nunfiltered_df.loc[last.name+1] = last.values"
     assert last_history == expected_history
 
-    # CHANGE_FILTER
+    # Change filter
     spreadsheet._handle_view_msg_helper(
         {
             "type": "change_filter",
@@ -844,12 +841,11 @@ def test_get_history():
             },
         },
     )
-
     last_history = spreadsheet.get_history()[-1]
     expected_history = "# Filter columns\ndf = unfiltered_df[(unfiltered_df['Date'] >= pd.to_datetime(1351900800000, unit='ms'))&(unfiltered_df['Date'] <= pd.to_datetime(1357862399999, unit='ms'))].copy()"
     assert last_history == expected_history
 
-    # CHANGE_SORT
+    # Change sort
     spreadsheet._handle_view_msg_helper(
         {"type": "change_sort", "sort_field": "A", "sort_ascending": True}
     )
@@ -857,21 +853,19 @@ def test_get_history():
     expected_history = "#Sort mixed type column\ndf['A_modin_spreadsheet_sort_column'] = df['A'].map(str)\ndf.sort_values('A_modin_spreadsheet_sort_column', ascending=True, inplace=True)\ndf.drop(columns='A_modin_spreadsheet_sort_column', inplace=True)"
     assert last_history == expected_history
 
-    # RESET_FILTER
+    # Reset filters
     spreadsheet._handle_view_msg_helper({"type": "reset_filters_end"})
-
     last_history = spreadsheet.get_history()[-1]
     expected_history = "#Sort mixed type column\ndf['A_modin_spreadsheet_sort_column'] = df['A'].map(str)\ndf.sort_values('A_modin_spreadsheet_sort_column', ascending=True, inplace=True)\ndf.drop(columns='A_modin_spreadsheet_sort_column', inplace=True)"
     assert last_history == expected_history
 
-    # RESET_SORT
+    # Reset sort
     spreadsheet._handle_view_msg_helper({"type": "reset_sort"})
-
     last_history = spreadsheet.get_history()[-1]
     expected_history = "# Reset sort\ndf.sort_index(ascending=True, inplace=True)"
     assert last_history == expected_history
 
-    # CLEAR_HISTORY
+    # Clear history
     spreadsheet._handle_view_msg_helper({"type": "clear_history"})
     history = spreadsheet.get_history()
     expected_history = ["unfiltered_df = df.copy()"]
@@ -880,8 +874,7 @@ def test_get_history():
 
 def test_apply_history():
     df = create_df()
-    another_df = df.copy()
-
+    df_copy = df.copy()
     spreadsheet = SpreadsheetWidget(df=df)
 
     spreadsheet._handle_view_msg_helper(
@@ -900,7 +893,6 @@ def test_apply_history():
             "filter_info": {"field": "A", "type": "slider", "min": None, "max": 4.14},
         },
     )
-
     spreadsheet._handle_view_msg_helper(
         {
             "row_index": 2,
@@ -910,7 +902,6 @@ def test_apply_history():
             "type": "edit_cell",
         }
     )
-
     spreadsheet._handle_view_msg_helper(
         {
             "type": "change_filter",
@@ -946,6 +937,14 @@ def test_apply_history():
     )
 
     changed_df = spreadsheet.get_changed_df()
-    applied_df = spreadsheet.apply_history(another_df)
 
+    # Checks that spreadsheet df is not modified in place
+    assert not changed_df.equals(df)
+
+    applied_df = spreadsheet.apply_history(df_copy)
+
+    # Checks that apply_history does not modify in place
+    assert df.equals(df_copy)
+
+    # Checks that the history is applied properly
     assert changed_df.equals(applied_df)
