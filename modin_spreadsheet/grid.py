@@ -1490,7 +1490,6 @@ class SpreadsheetWidget(widgets.DOMWidget):
 
     def _handle_view_msg(self, widget, content, buffers=None):
         try:
-            # self._view_msgs.append(content)
             self._handle_view_msg_helper(content)
         except Exception as e:
             self.log.error(e)
