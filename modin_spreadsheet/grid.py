@@ -1559,6 +1559,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
                 return
 
             self._update_table(triggered_by="change_viewport")
+            self._update_table(triggered_by="edit_cell", fire_data_change_event=True)
             self._notify_listeners(
                 {
                     "name": "viewport_changed",
