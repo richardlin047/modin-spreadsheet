@@ -3,6 +3,7 @@ import modin.pandas as pd
 import pandas
 import numpy as np
 import json
+import warnings
 
 from types import FunctionType
 from IPython.display import display
@@ -969,9 +970,11 @@ class SpreadsheetWidget(widgets.DOMWidget):
         else:
             self._row_styles = {}
 
-        df_json = df.to_json(
-            None, orient="table", date_format="iso", double_precision=self.precision
-        )
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=UserWarning)
+            df_json = df.to_json(
+                None, orient="table", date_format="iso", double_precision=self.precision
+            )
 
         if update_columns:
             self._interval_columns = []
@@ -1046,9 +1049,14 @@ class SpreadsheetWidget(widgets.DOMWidget):
         # and then call 'to_json' again to get a new version of the table
         # json that has interval columns replaced with text columns
         if len(self._interval_columns) > 0 or len(self._period_columns) > 0:
-            df_json = df.to_json(
-                None, orient="table", date_format="iso", double_precision=self.precision
-            )
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=UserWarning)
+                df_json = df.to_json(
+                    None,
+                    orient="table",
+                    date_format="iso",
+                    double_precision=self.precision,
+                )
 
         self._df_json = df_json
 
@@ -1490,7 +1498,10 @@ class SpreadsheetWidget(widgets.DOMWidget):
 
     def _handle_view_msg(self, widget, content, buffers=None):
         try:
-            self._handle_view_msg_helper(content)
+            # Ignore UserWarnings in spreadsheet widget
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=UserWarning)
+                self._handle_view_msg_helper(content)
         except Exception as e:
             self.log.error(e)
             self.log.exception("Unhandled exception while handling msg")
