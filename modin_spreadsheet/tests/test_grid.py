@@ -1055,3 +1055,32 @@ def test_filter_relevant_history():
     filtered_history = spreadsheet.filter_relevant_history(persist=False)
     assert filtered_history == expected_filtered_history
     assert spreadsheet.get_history() == mixed_history
+
+
+def test_mixed_type_sort():
+    df = pd.DataFrame(
+        {
+            "Mixed": [pd.Timestamp("2017-02-02"), np.nan, 1e10, 5, "hey"],
+            1: [5, 4, "hello", 2, 1],
+        }
+    )
+
+    view = SpreadsheetWidget(df=df)
+
+    view._handle_view_msg_helper(
+        {"type": "change_sort", "sort_field": "Mixed", "sort_ascending": True}
+    )
+
+    expected_order_mixed = [1e10, pd.Timestamp("2017-02-02"), 5, "hey", np.nan]
+    sorted_order_mixed = list(view.get_changed_df()["Mixed"])
+    assert expected_order_mixed[:4] == sorted_order_mixed[:4]
+    # np.nan != np.nan by definition, so check if value at index 4 are both np.nan
+    assert isnan(expected_order_mixed[4]) and isnan(sorted_order_mixed[4])
+
+    # check sorting on number column names works
+    view._handle_view_msg_helper(
+        {"type": "change_sort", "sort_field": 1, "sort_ascending": True}
+    )
+    expected_order_1 = [1, 2, 4, 5, "hello"]
+    sorted_order_1 = list(view.get_changed_df()[1])
+    assert expected_order_1 == sorted_order_1
