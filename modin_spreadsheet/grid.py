@@ -2032,3 +2032,43 @@ class SpreadsheetWidget(widgets.DOMWidget):
 
     def reset_filters(self):
         self.send({"type": "reset_filters"})
+
+    def filter_relevant_history(self, persist=True):
+        history = self.get_history()
+        relevant_history = []
+        # Whether a filter or sort can still be added
+        add_filter = True
+        add_sort = True
+        # Check history in reverse
+        for cmd in history[::-1]:
+            # Add the latest filter after a reset filter
+            if cmd.startswith(constants.FILTER_COLUMNS):
+                if not add_filter:
+                    continue
+                relevant_history.insert(0, cmd)
+                add_filter = False
+            # Add the latest sort after a reset sort
+            elif (
+                cmd.startswith(constants.SORT_COLUMN)
+                or cmd.startswith(constants.SORT_INDEX)
+                or cmd.startswith(constants.SORT_MIXED_TYPE_COLUMN)
+            ):
+                if not add_sort:
+                    continue
+                relevant_history.insert(0, cmd)
+                add_sort = False
+            # Prevent adding filter
+            elif cmd.startswith(constants.RESET_FILTER) or cmd.startswith(
+                constants.RESET_ALL_FILTERS
+            ):
+                add_filter = False
+            # Prevent adding sort
+            elif cmd.startswith(constants.RESET_SORT):
+                add_sort = False
+            # Include edit cell, remove/add row, initialization, etc.
+            else:
+                relevant_history.insert(0, cmd)
+        # Change internal state if persisting
+        if persist:
+            self._history = relevant_history
+        return relevant_history
