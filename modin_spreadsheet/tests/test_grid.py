@@ -948,3 +948,110 @@ def test_apply_history():
 
     # Checks that the history is applied properly
     assert changed_df.equals(applied_df)
+
+
+def test_filter_relevant_history():
+    spreadsheet = SpreadsheetWidget(df=create_df())
+
+    # Initial history
+    filtered_history = spreadsheet.filter_relevant_history()
+    expected_history = ["unfiltered_df = df.copy()"]
+    assert filtered_history == expected_history
+
+    # Empty history
+    spreadsheet._history = []
+    expected_history = []
+    filtered_history = spreadsheet.filter_relevant_history()
+    assert filtered_history == expected_history
+
+    # Multiple filters
+    spreadsheet._history = [
+        "# Filter columns\ndf = unfiltered_df[(unfiltered_df['trip_id'] <= 48802)].copy()",
+        "# Filter columns\ndf = unfiltered_df[(unfiltered_df['trip_id'] >= 5495)&(unfiltered_df['trip_id'] <= 48802)].copy()",
+        "# Filter columns\ndf = unfiltered_df[(unfiltered_df['trip_id'] >= 5495)&(unfiltered_df['trip_id'] <= 48802)&(unfiltered_df['vendor_id'] >= 2)].copy()",
+    ]
+    expected_history = [
+        "# Filter columns\ndf = unfiltered_df[(unfiltered_df['trip_id'] >= 5495)&(unfiltered_df['trip_id'] <= 48802)&(unfiltered_df['vendor_id'] >= 2)].copy()",
+    ]
+    filtered_history = spreadsheet.filter_relevant_history()
+    assert filtered_history == expected_history
+
+    # Multiple sorts
+    spreadsheet._history = [
+        "# Sort column\ndf.sort_values('trip_id', ascending=True, inplace=True)",
+        "# Sort column\ndf.sort_values('vendor_id', ascending=True, inplace=True)",
+        "# Sort column\ndf.sort_values('vendor_id', ascending=False, inplace=True)",
+    ]
+    expected_history = [
+        "# Sort column\ndf.sort_values('vendor_id', ascending=False, inplace=True)",
+    ]
+    filtered_history = spreadsheet.filter_relevant_history()
+    assert filtered_history == expected_history
+
+    # Filter after reset
+    spreadsheet._history = [
+        "# Filter columns\ndf = unfiltered_df[(unfiltered_df['trip_id'] >= 6485)].copy()",
+        "# Reset filter\ndf = unfiltered_df.copy()",
+        "# Filter columns\ndf = unfiltered_df[(unfiltered_df['trip_id'] <= 41873)].copy()",
+    ]
+    expected_history = [
+        "# Filter columns\ndf = unfiltered_df[(unfiltered_df['trip_id'] <= 41873)].copy()"
+    ]
+    filtered_history = spreadsheet.filter_relevant_history()
+    assert filtered_history == expected_history
+
+    # Sort after reset
+    spreadsheet._history = [
+        "# Sort column\ndf.sort_values('trip_id', ascending=True, inplace=True)",
+        "# Reset sort\ndf.sort_index(ascending=True, inplace=True)",
+        "# Sort column\ndf.sort_values('vendor_id', ascending=True, inplace=True)",
+    ]
+    expected_history = [
+        "# Sort column\ndf.sort_values('vendor_id', ascending=True, inplace=True)"
+    ]
+    filtered_history = spreadsheet.filter_relevant_history()
+    assert filtered_history == expected_history
+
+    # None after reset
+    spreadsheet._history = [
+        "# Sort column\ndf.sort_values('vendor_id', ascending=True, inplace=True)",
+        "# Reset sort\ndf.sort_index(ascending=True, inplace=True)",
+        "# Filter columns\ndf = unfiltered_df[(unfiltered_df['trip_id'] >= 6980)].copy()",
+        "# Reset all filters\ndf = unfiltered_df.copy()",
+    ]
+    expected_history = []
+    filtered_history = spreadsheet.filter_relevant_history()
+    assert filtered_history == expected_history
+
+    # Mixed transformation
+    mixed_history = [
+        "# Edit cell\ndf.loc[(4, 'trip_id')]=10\nunfiltered_df.loc[(4, 'trip_id')]=10",
+        "# Sort column\ndf.sort_values('trip_id', ascending=True, inplace=True)",
+        "# Sort column\ndf.sort_values('rate_code_id', ascending=True, inplace=True)",
+        "# Reset sort\ndf.sort_index(ascending=True, inplace=True)",
+        "# Sort index\ndf.sort_index(ascending=True, inplace=True)",
+        "# Remove rows\ndf.drop([6], inplace=True)\nunfiltered_df.drop([6], inplace=True)",
+        "# Add row\nlast = df.loc[max(df.index)].copy()\ndf.loc[last.name+1] = last.values\nunfiltered_df.loc[last.name+1] = last.values",
+        "# Reset all filters\ndf = unfiltered_df.copy()",
+        "# Sort index\ndf.sort_index(ascending=True, inplace=True)",
+    ]
+    expected_filtered_history = [
+        "# Edit cell\ndf.loc[(4, 'trip_id')]=10\nunfiltered_df.loc[(4, 'trip_id')]=10",
+        "# Remove rows\ndf.drop([6], inplace=True)\nunfiltered_df.drop([6], inplace=True)",
+        "# Add row\nlast = df.loc[max(df.index)].copy()\ndf.loc[last.name+1] = last.values\nunfiltered_df.loc[last.name+1] = last.values",
+        "# Sort index\ndf.sort_index(ascending=True, inplace=True)",
+    ]
+    spreadsheet._history = mixed_history
+    filtered_history = spreadsheet.filter_relevant_history()
+    assert filtered_history == expected_filtered_history
+
+    # Persist filter history
+    spreadsheet._history = mixed_history
+    spreadsheet.filter_relevant_history(persist=True)
+    assert spreadsheet.get_history() == expected_filtered_history
+
+    # Don't persist filter history
+    spreadsheet._history = mixed_history
+    filtered_history = spreadsheet.filter_relevant_history(persist=False)
+    assert filtered_history == expected_filtered_history
+    assert spreadsheet.get_history() == mixed_history
