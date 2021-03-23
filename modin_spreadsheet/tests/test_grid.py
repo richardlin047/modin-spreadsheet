@@ -850,13 +850,13 @@ def test_get_history():
         {"type": "change_sort", "sort_field": "A", "sort_ascending": True}
     )
     last_history = spreadsheet.get_history()[-1]
-    expected_history = "#Sort mixed type column\ndf['A_modin_spreadsheet_sort_column'] = df['A'].map(str)\ndf.sort_values('A_modin_spreadsheet_sort_column', ascending=True, inplace=True)\ndf.drop(columns='A_modin_spreadsheet_sort_column', inplace=True)"
+    expected_history = "# Sort mixed type column\ndf['A_modin_spreadsheet_sort_column'] = df['A'].map(str)\ndf.sort_values('A_modin_spreadsheet_sort_column', ascending=True, inplace=True)\ndf.drop(columns='A_modin_spreadsheet_sort_column', inplace=True)"
     assert last_history == expected_history
 
     # Reset filters
     spreadsheet._handle_view_msg_helper({"type": "reset_filters_end"})
     last_history = spreadsheet.get_history()[-1]
-    expected_history = "#Sort mixed type column\ndf['A_modin_spreadsheet_sort_column'] = df['A'].map(str)\ndf.sort_values('A_modin_spreadsheet_sort_column', ascending=True, inplace=True)\ndf.drop(columns='A_modin_spreadsheet_sort_column', inplace=True)"
+    expected_history = "# Sort mixed type column\ndf['A_modin_spreadsheet_sort_column'] = df['A'].map(str)\ndf.sort_values('A_modin_spreadsheet_sort_column', ascending=True, inplace=True)\ndf.drop(columns='A_modin_spreadsheet_sort_column', inplace=True)"
     assert last_history == expected_history
 
     # Reset sort
