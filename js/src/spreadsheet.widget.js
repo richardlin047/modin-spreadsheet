@@ -118,6 +118,12 @@ class ModinSpreadsheetView extends widgets.DOMWidgetView {
     });
 
     append_btn({
+      loading_text: 'Filtering...',
+      event_type: 'filter_history',
+      text: 'Filter History'
+    });
+
+    append_btn({
       loading_text: 'Resetting...',
       text: 'Reset Filters',
       handler_function: 'reset_all_filters'

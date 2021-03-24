@@ -1672,6 +1672,9 @@ class SpreadsheetWidget(widgets.DOMWidget):
             self._update_history_cell()
         elif content["type"] == "clear_history":
             self.clear_history(from_api=False)
+        elif content["type"] == "filter_history":
+            self._filter_relevant_history(persist=True)
+            self._notify_listeners({"name": "history_filtered", "source": "gui"})
 
     def _notify_listeners(self, event):
         # notify listeners at the module level
@@ -2034,6 +2037,11 @@ class SpreadsheetWidget(widgets.DOMWidget):
         self.send({"type": "reset_filters"})
 
     def filter_relevant_history(self, persist=True):
+        relevant_history = self._filter_relevant_history(persist)
+        self._notify_listeners({"name": "history_filtered", "source": "api"})
+        return relevant_history
+
+    def _filter_relevant_history(self, persist):
         history = self.get_history()
         relevant_history = []
         # Whether a filter or sort can still be added
@@ -2071,4 +2079,5 @@ class SpreadsheetWidget(widgets.DOMWidget):
         # Change internal state if persisting
         if persist:
             self._history = relevant_history
+            self._update_history_cell()
         return relevant_history
