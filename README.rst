@@ -26,7 +26,7 @@ Here is an example of the Modin-spreadsheet widget in action.
 
 API Documentation
 -----------------
-API documentation is hosted on `readthedocs <http://qgrid.readthedocs.io/en/latest/>`_.
+Full documentation for Modin-spreadsheet is still in progress. Most features are documented on Qgrid's readthedocs: `https://qgrid.readthedocs.io/ <http://qgrid.readthedocs.io/en/latest/>`_.
 
 Installation
 ------------
