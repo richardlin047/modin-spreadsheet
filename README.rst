@@ -11,40 +11,11 @@ Modin-spreadsheet is a Jupyter notebook widget which uses `SlickGrid <https://gi
 DataFrames within a Jupyter notebook. This allows you to explore your DataFrames with intuitive scrolling, sorting, and
 filtering controls, as well as edit your DataFrames by double clicking cells.
 
-Qgrid was developed for use in `Quantopian's hosted research environment
-<https://www.quantopian.com/posts/qgrid-now-available-in-research-an-interactive-grid-for-sorting-and-filtering-dataframes?utm_source=github&utm_medium=web&utm_campaign=qgrid-repo>`_
-and is available for use in that environment as of June 2018.
-Quantopian also offers a `fully managed service for professionals <https://factset.quantopian.com>`_
-that includes Qgrid, Zipline, Alphalens, Pyfolio, FactSet data, and more.
+TODO: Add about history
 
-Announcements: Qgrid Webinar
-----------------------------
-Qgrid author Tim Shawver recently did a live webinar about Qgrid, and the recording of the webinar is `now available on YouTube <https://www.youtube.com/watch?v=AsJJpgwIX0Q>`_.
+Modin-spreadsheet is forked from Qgrid, which was developed by Quantopian. To learn more about Qgrid, here is an `introduction on YouTube <https://www.youtube.com/watch?v=AsJJpgwIX0Q>`_.
 
-This talk will be interesting both for people that are new to Qgrid, as well as longtime fans that are interested in learning more about the project.
-
-Demo
-----
-Click the badge below to try out the latest beta of qgrid in Quantopian's hosted research environment. If you're already signed into Quantopian you'll be brought directly to the demo notebook. Otherwise you'll be prompted to register (it's free):
-
-.. image:: https://img.shields.io/badge/launch-quantopian-red.svg?colorB=d33015
-    :target: https://www.quantopian.com/clone_notebook?id=5b2baee1b3d6870048620188&utm_source=github&utm_medium=web&utm_campaign=qgrid-repo
-|
-Click the badge below to try out qgrid using binder:
-
-.. image:: https://beta.mybinder.org/badge.svg
-    :target: https://mybinder.org/v2/gh/quantopian/qgrid-notebooks/master?filepath=index.ipynb
-|
-Click the following badge to try out qgrid in Jupyterlab, also using binder:
-
-.. image:: https://mybinder.org/badge.svg
-    :target: https://mybinder.org/v2/gh/quantopian/qgrid-notebooks/master?urlpath=lab
-|
-*For both binder links, you'll see a brief loading screen while a server is being created for you in the cloud.  This shouldn't take more than a minute, and usually completes in under 10 seconds.*
-
-*The binder demos generally will be using the most recent stable release of qgrid, so features that were added in a recent beta version may not be available in those demos.*
-
-For people who would rather not go to another page to try out modin-spreadsheet for real, here's the tldr; version:
+Here is an example of the Modin-spreadsheet widget in action.
 
         .. figure:: docs/images/filtering_demo.gif
          :align: left
@@ -67,33 +38,6 @@ Installing with pip::
 
   # only required if you have not enabled the ipywidgets nbextension yet
   jupyter nbextension enable --py --sys-prefix widgetsnbextension
-
-Installing with conda::
-
-  # only required if you have not added conda-forge to your channels yet
-  conda config --add channels conda-forge
-
-  conda install modin_spreadsheet
-
-Jupyterlab Installation
------------------------
-
-First, go through the normal installation steps above as you normally would when using modin-spreadsheet in the notebook.
-If you haven't already install jupyterlab and enabled ipywidgets, do that first with the following lines::
-
-  pip install jupyterlab
-  jupyter labextension install @jupyter-widgets/jupyterlab-manager
-
-Install the modin_spreadsheet jupyterlab extension and enable::
-
-  jupyter labextension install modin_spreadsheet
-
-At this point if you run jupyter lab normally with the 'jupyter lab' command, you should be
-able to use modin-spreadsheet in notebooks as you normally would.
-
-*Please Note: Jupyterlab support has been tested with jupyterlab 0.30.5 and jupyterlab-manager 0.31.3, so if you're
-having trouble, try installing those versions. Feel free to file an issue if you find that modin-spreadsheet isn't working
-with a newer version of either dependency.*
 
 What's New
 ----------
@@ -151,22 +95,6 @@ Qgrid depends on the following three Python packages:
 
 These are listed in `requirements.txt <https://github.com/quantopian/qgrid/blob/master/requirements.txt>`_
 and will be automatically installed (if necessary) when qgrid is installed via pip.
-
-Compatibility
--------------
-
-=================  ===========================  ==============================  ==============================
- qgrid             IPython / Jupyter notebook   ipywidgets                      Jupyterlab
-=================  ===========================  ==============================  ==============================
- 0.2.0             2.x                          N/A                             N/A
- 0.3.x             3.x                          N/A                             N/A
- 0.3.x             4.0                          4.0.x                           N/A
- 0.3.x             4.1                          4.1.x                           N/A
- 0.3.2             4.2                          5.x                             N/A
- 0.3.3             5.x                          6.x                             N/A
- 1.0.x             5.x                          7.x                             0.30.x
-=================  ===========================  ==============================  ==============================
-
 
 Running the demo notebooks locally
 ----------------------------------
@@ -294,24 +222,6 @@ to use in conjunction with other visualizations (in this case, a couple of ``Out
          :width: 600px
 
           A brief demo showing modin-spreadsheet's events api
-
-Continuing to use qgrid 0.3.3
------------------------------
-If you're looking for the installation and usage instructions for qgrid 0.3.3 and the sample notebook that goes
-along with it, please see the `qgrid 0.3.3 tag <https://github.com/quantopian/qgrid/tree/v0.3.3>`_ in this
-repository. The installation steps will be mostly the same. The only difference is that when you run "pip install"
-you'll have to explicitly specify that you want to install version 0.3.3, like this::
-
-  pip install qgrid==0.3.3
-
-If you're looking for the API docs, you can find them on the
-`readthedocs page for qgrid 0.3.3 <http://qgrid.readthedocs.io/en/v0.3.3/>`_.
-
-If you're looking for the demo notebook for 0.3.3, it's still availabe `in nbviewer
-<http://nbviewer.jupyter.org/gist/TimShawver/8fcef51dd3c222ed25306c002ab89b60>`_.
-
-Qgrid 0.3.3 is not compatible with ipywidgets 7, so if you need support for ipywidgets 7, you'll need to use
-qgrid 1.0.
 
 Contributing
 ------------
