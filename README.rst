@@ -74,48 +74,6 @@ Qgrid now displays multi-indexed DataFrames with some of the index cells merged 
          :target: https://s3.amazonaws.com/quantopian-forums/pipeline_with_qgrid.png
          :width: 100px
 
-Dependencies
-------------
-
-Qgrid runs on `Python 2 or 3 <https://www.python.org/downloads/>`_.  You'll also need
-`pip <https://pypi.python.org/pypi/pip>`_ for the installation steps below.
-
-Qgrid depends on the following three Python packages:
-
-    `Jupyter notebook <https://github.com/jupyter/notebook>`_
-      This is the interactive Python environment in which qgrid runs.
-
-    `ipywidgets <https://github.com/ipython/ipywidgets>`_
-      In order for Jupyter notebooks to be able to run widgets, you have to also install this ipywidgets package.
-      It's maintained by the Jupyter organization, the same people who created Jupyter notebook.
-
-    `Pandas <http://pandas.pydata.org/>`_
-      A powerful data analysis / manipulation library for Python.  Qgrid requires that the data to be rendered as an
-      interactive grid be provided in the form of a pandas DataFrame.
-
-These are listed in `requirements.txt <https://github.com/quantopian/qgrid/blob/master/requirements.txt>`_
-and will be automatically installed (if necessary) when qgrid is installed via pip.
-
-Running the demo notebooks locally
-----------------------------------
-
-There are a couple of demo notebooks in the `qgrid-notebooks <https://github.com/quantopian/qgrid-notebooks/>`_ repository
-which will help you get familiar with the functionality that qgrid provides. Here are the steps to clone the
-qgrid-notebooks repository and open a demo notebook:
-
-#. Install qgrid by following the instructions in the `Installation`_ section above, if you haven't already
-
-#. Clone the qgrid-notebooks repository from GitHub::
-
-    git clone https://github.com/quantopian/qgrid-notebooks.git
-
-#. Install the dev requirements for the repository and start the notebook server::
-
-    cd qgrid-notebooks
-    pip install -r requirements_dev.txt
-    jupyter notebook
-
-#. Click on one of the two notebooks (`index.ipynb <https://github.com/quantopian/qgrid-notebooks/blob/master/index.ipynb>`_ or `experimental.ipynb <https://github.com/quantopian/qgrid-notebooks/blob/master/experimental.ipynb>`_) that you see listed in the notebook UI in your browser.
 
 Running from source & testing your changes
 ------------------------------------------
