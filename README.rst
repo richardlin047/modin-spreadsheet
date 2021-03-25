@@ -30,14 +30,21 @@ Full documentation for Modin-spreadsheet is still in progress. Most features are
 
 Installation
 ------------
+Modin-spreadsheet is intended be used through the `Modin Spreadsheet API <https://modin.readthedocs.io>`_ (Docs in progress...). Please install Modin and modin-spreadsheet by running the following: ::
 
-Installing with pip::
+    pip install modin
+    pip install modin[spreadsheet]
 
-  pip install modin-spreadsheet
+To enable the Modin-spreadsheet widget, you may need to also run::
+
   jupyter nbextension enable --py --sys-prefix modin_spreadsheet
 
   # only required if you have not enabled the ipywidgets nbextension yet
   jupyter nbextension enable --py --sys-prefix widgetsnbextension
+
+If needed, Modin-spreadsheet can be installed through PyPi. ::
+
+  pip install modin-spreadsheet
 
 What's New
 ----------
