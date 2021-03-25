@@ -1,8 +1,8 @@
-.. image:: https://media.quantopian.com/logos/open_source/qgrid-logo-03.png
-    :target: https://qgrid.readthedocs.io
-    :width: 190px
+.. image:: https://github.com/modin-project/modin/blob/3d6368edf311995ad231ec5342a51cd9e4e3dc20/docs/img/MODIN_ver2_hrz.png?raw=true
+    :target: https://modin.readthedocs.io
+    :width: 77%
     :align: center
-    :alt: qgrid
+    :alt: Modin
 
 =================
 modin-spreadsheet
