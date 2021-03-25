@@ -165,17 +165,6 @@ Running automated tests
 There is a small python test suite which can be run locally by running the command ``pytest`` in the root folder
 of the repository.
 
-Building docs
-^^^^^^^^^^^^^
-The read-the-docs page is generated using sphinx. If you change any doc strings or want to add something to the
-read-the-docs page, you can preview your changes locally before submitting a PR using the following commands::
-
-    pip install sphinx sphinx_rtd_theme
-    cd docs && make html
-
-This will result in the ``docs/_build/html`` folder being populated with a new version of the read-the-docs site. If
-you open the ``index.html`` file in your browser, you should be able to preview your changes.
-
 Events API
 ----------
 As of qgrid 1.0.3 there are new ``on`` and ``off`` methods in qgrid which can be used to attach/detach event handlers. They're available on both the ``modin_spreadsheet`` module (see `qgrid.on <https://qgrid.readthedocs.io/en/latest/#qgrid.on>`_), and on individual SpreadsheetWidget instances (see `qgrid.QgridWidget.on <https://qgrid.readthedocs.io/en/latest/#qgrid.QgridWidget.on>`_). Previously the only way to listen for events was to use undocumented parts of the API.
