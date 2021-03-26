@@ -112,10 +112,6 @@ to do this.
 
     jupyter nbextension install --py --symlink --sys-prefix modin_spreadsheet && jupyter nbextension enable --py --sys-prefix modin_spreadsheet
 
-#. If desired, install the labextension::
-
-    jupyter labextension link js/
-
 #. Run the notebook as you normally would with the following command::
 
     jupyter notebook
@@ -172,8 +168,8 @@ The first gif shows how you can use modin-spreadsheet to filter the data that's 
 
           A brief demo showing modin-spreadsheet hooked up to a matplotlib plot
 
-The second gif shows how you can move modin-spreadsheet to a separate view in JupyterLab, which makes it more convenient
-to use in conjunction with other visualizations (in this case, a couple of ``Output`` widgets):
+The second gif shows how events are recorded. The layout is specific to JupyterLab, which is not yet supported, but the
+Events API is the same on Jupyter notebook.
 
         .. figure:: docs/images/events_api.gif
          :align: left
