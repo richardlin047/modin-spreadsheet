@@ -51,35 +51,40 @@ If needed, Modin-spreadsheet can be installed through PyPi. ::
 
   pip install modin-spreadsheet
 
-What's New
+Features
 ----------
-**Column-specific options (as of 1.1.0)**:
-Thanks to a significant `PR from the community <https://github.com/quantopian/qgrid/pull/191>`_, Qgrid users now have the ability to set a number of options on a per column basis.  This allows you to do things like explicitly specify which column should be sortable, editable, etc.  For example, if you wanted to prevent editing on all columns except for a column named `'A'`, you could do the following::
+**Column-specific options**:
+The feature enables the ability to set options on a per column basis.  This allows you to do things like explicitly
+specify which column should be sortable, editable, etc.  For example, if you wanted to prevent editing on all columns
+except for a column named `'A'`, you could do the following::
 
     col_opts = { 'editable': False }
     col_defs = { 'A': { 'editable': True } }
-    qgrid.show_grid(df, column_options=col_opts, column_definitions=col_defs)
+    modin_spreadsheet.show_grid(df, column_options=col_opts, column_definitions=col_defs)
 
-See the updated `show_grid <https://qgrid.readthedocs.io/en/v1.1.0/#qgrid.show_grid>`_ documentation for more information.
+See the `show_grid <https://qgrid.readthedocs.io/en/v1.1.0/#qgrid.show_grid>`_ documentation for more information.
 
-**Disable editing on a per-row basis (as of 1.1.0)**:
-This feature can be thought of as the first row-specific option that qgrid supports.  In particular it allows a user to specify, using python code, whether or not a particular row should be editable. For example, to make it so only rows in the grid where the `'status'` column is set to `'active'` are editable, you might use the following code::
+**Disable editing on a per-row basis**:
+This feature allows a user to specify whether or not a particular row should be editable. For example, to make it so
+only rows in the grid where the `'status'` column is set to `'active'` are editable, you might use the following code::
 
     def can_edit_row(row):
         return row['status'] == 'active'
 
-    qgrid.show_grid(df, row_edit_callback=can_edit_row)
+    modin_spreadsheet.show_grid(df, row_edit_callback=can_edit_row)
 
-**New API methods for dynamically updating an existing qgrid widget (as of 1.1.0)**:
-Adds the following new methods, which can be used to update the state of an existing Qgrid widget without having to call `show_grid` to completely rebuild the widget:
+**Dynamically update an existing spreadsheet widget**:
+These API allow users to programmatically update the state of an existing spreadsheet widget:
 
     - `edit_cell <https://qgrid.readthedocs.io/en/latest/#qgrid.QgridWidget.edit_cell>`_
     - `change_selection <https://qgrid.readthedocs.io/en/latest/#qgrid.QgridWidget.change_selection>`_
     - `toggle_editable <https://qgrid.readthedocs.io/en/latest/#qgrid.QgridWidget.toggle_editable>`_
     - `change_grid_option <https://qgrid.readthedocs.io/en/latest/#qgrid.QgridWidget.change_grid_option>`_ (experimental)
 
-**Improved MultiIndex Support (as of 1.0.6-beta.6)**:
-Qgrid now displays multi-indexed DataFrames with some of the index cells merged for readability, as is normally done when viewing DataFrames as a static html table.  The following image shows qgrid displaying a multi-indexed DataFrame that was returned from Quantopian's `Pipeline API <https://www.quantopian.com/tutorials/pipeline?utm_source=github&utm_medium=web&utm_campaign=qgrid-repo>`_:
+**MultiIndex Support**:
+Modin-spreadsheet displays multi-indexed DataFrames with some of the index cells merged for readability, as is normally
+done when viewing DataFrames as a static html table.  The following image shows Modin-spreadsheet displaying a
+multi-indexed DataFrame:
 
 .. figure:: https://s3.amazonaws.com/quantopian-forums/pipeline_with_qgrid.png
          :align: left
@@ -133,33 +138,26 @@ of the repository.
 
 Events API
 ----------
-As of qgrid 1.0.3 there are new ``on`` and ``off`` methods in qgrid which can be used to attach/detach event handlers. They're available on both the ``modin_spreadsheet`` module (see `qgrid.on <https://qgrid.readthedocs.io/en/latest/#qgrid.on>`_), and on individual SpreadsheetWidget instances (see `qgrid.QgridWidget.on <https://qgrid.readthedocs.io/en/latest/#qgrid.QgridWidget.on>`_). Previously the only way to listen for events was to use undocumented parts of the API.
+The Events API provides ``on`` and ``off`` methods which can be used to attach/detach event handlers. They're available
+on both the ``modin_spreadsheet`` module (see `qgrid.on <https://qgrid.readthedocs.io/en/latest/#qgrid.on>`_), and on
+individual SpreadsheetWidget instances (see `qgrid.QgridWidget.on <https://qgrid.readthedocs.io/en/latest/#qgrid.QgridWidget.on>`_).
 
-Having the ability to attach event handlers allows us to do some interesting things in terms of using modin-spreadsheet in conjunction with other widgets/visualizations. One example is using modin-spreadsheet to filter a DataFrame that's also being displayed by another visualization.
+Having the ability to attach event handlers allows us to do some interesting things in terms of using modin-spreadsheet
+in conjunction with other widgets/visualizations. One example is using modin-spreadsheet to filter a DataFrame that's
+also being displayed by another visualization.
 
-If you previously used the ``observe`` method to respond to modin-spreadsheet events, lets see how your code might be updated to use the new ``on`` method::
+Here's how you would use the ``on`` method to print the DataFrame every time there's a change made::
 
-    # Before upgrading to 1.0.3
-    def handle_df_change(change):
-        print(change['new'])
-
-    qgrid_widget.observe(handle_df_change, names=['_df'])
-
-When you upgrade to 1.0.3, you have more granular control over which events you do an don't listen to, but you can also replicate the previous behavior of calling ``print`` every time the state of the internal DataFrame is changed. Here's what that would look like using the new ``on`` method::
-
-    # After upgrading to 1.0.3
-    def handle_json_updated(event, qgrid_widget):
+    def handle_json_updated(event, spreadsheet_widget):
         # exclude 'viewport_changed' events since that doesn't change the DataFrame
         if (event['triggered_by'] != 'viewport_changed'):
-            print(qgrid_widget.get_changed_df())
+            print(spreadsheet_widget.get_changed_df())
 
-    qgrid_widget.on('json_updated', handle_json_updated)
+    spreadsheet_widget.on('json_updated', handle_json_updated)
 
-See the `events notebook <https://mybinder.org/v2/gh/quantopian/qgrid-notebooks/master?filepath=events.ipynb>`_ for more examples of using these new API methods.
+Here are some examples of how the Events API can be applied.
 
-For people who would rather not go to another page to try out the events notebook, here are a couple of gifs to give you an idea of what you can do with it.
-
-The first gif shows how you can use modin-spreadsheet to filter the data that's being shown by a matplotlib scatter plot:
+This shows how you can use modin-spreadsheet to filter the data that's being shown by a matplotlib scatter plot:
 
         .. figure:: docs/images/linked_to_scatter.gif
          :align: left
@@ -168,8 +166,8 @@ The first gif shows how you can use modin-spreadsheet to filter the data that's 
 
           A brief demo showing modin-spreadsheet hooked up to a matplotlib plot
 
-The second gif shows how events are recorded. The layout is specific to JupyterLab, which is not yet supported, but the
-Events API is the same on Jupyter notebook.
+This shows how events are recorded in real-time. The demo is recorded on JupyterLab, which is not yet supported, but
+the functionality is the same on Jupyter Notebook.
 
         .. figure:: docs/images/events_api.gif
          :align: left
