@@ -7,13 +7,18 @@
 =================
 modin-spreadsheet
 =================
-Modin-spreadsheet is a Jupyter notebook widget which uses `SlickGrid <https://github.com/mleibman/SlickGrid>`_ to render pandas
-DataFrames within a Jupyter notebook. This allows you to explore your DataFrames with intuitive scrolling, sorting, and
-filtering controls, as well as edit your DataFrames by double clicking cells.
+Modin-spreadsheet is the underlying package for the `Modin <https://modin.readthedocs.io>`_ Spreadsheet API. It renders
+DataFrames within a Jupyter notebook as a spreadsheet and makes it easy to explore with intuitive scrolling, sorting,
+and filtering controls. The spreadsheet allows click editing, adding/removing rows, etc. and can also be controlled
+using the API. Modin-spreadsheet also records the history of changes made so that you can share or reproduce your
+results.
 
-TODO: Add about history
+Modin-spreadsheet builds on top of `SlickGrid <https://github.com/mleibman/SlickGrid>`_ and Modin to provide a highly
+responsive experience even on DataFrames with 100,000 rows.
 
-Modin-spreadsheet is forked from Qgrid, which was developed by Quantopian. To learn more about Qgrid, here is an `introduction on YouTube <https://www.youtube.com/watch?v=AsJJpgwIX0Q>`_.
+Modin-spreadsheet is forked from Qgrid, which was developed by Quantopian. Some documentation will reference Qgrid
+documentation as we continue to build out our own documentation. To learn more about Qgrid, here is an
+`introduction on YouTube <https://www.youtube.com/watch?v=AsJJpgwIX0Q>`_.
 
 Here is an example of the Modin-spreadsheet widget in action.
 
