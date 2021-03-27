@@ -27,7 +27,8 @@ Here is an example of the Modin-spreadsheet widget in action.
     :target: docs/images/overview_demo.gif
     :width: 200px
 
-    A brief demo showing filtering, editing, history, and exporting the changed dataframe
+    A brief demo showing the common use cases for Modin-spreadsheet: filtering, editing, sorting, generating
+    reproducible code, and exporting the changed dataframe
 
 API Documentation
 -----------------
@@ -120,7 +121,7 @@ This shows how you can use modin-spreadsheet to filter the data that's being sho
     :target: docs/images/linked_to_scatter.gif
     :width: 600px
 
-    A brief demo showing Modin-spreadsheet hooked up to a matplotlib plot. Disclaimer: This is from the Qgrid documentation.
+    Disclaimer: This is from the Qgrid documentation.
 
 This shows how events are recorded in real-time. The demo is recorded on JupyterLab, which is not yet supported, but
 the functionality is the same on Jupyter Notebook.
@@ -130,7 +131,7 @@ the functionality is the same on Jupyter Notebook.
     :target: docs/images/events_api.gif
     :width: 600px
 
-    A brief demo showing Modin-spreadsheet's Events API. Disclaimer: This is from the Qgrid documentation.
+    Disclaimer: This is from the Qgrid documentation.
 
 Running from source & testing your changes
 ------------------------------------------
