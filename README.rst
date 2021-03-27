@@ -22,12 +22,12 @@ about Qgrid, here is an `introduction on YouTube <https://www.youtube.com/watch?
 
 Here is an example of the Modin-spreadsheet widget in action.
 
-        .. figure:: docs/images/filtering_demo.gif
+        .. figure:: docs/images/overview_demo.gif
          :align: left
-         :target: docs/images/filtering_demo.gif
+         :target: docs/images/overview_demo.gif
          :width: 200px
 
-          A brief demo showing filtering, editing, and the `get_changed_df()` method
+          A brief demo showing filtering, editing, history, and exporting the changed dataframe
 
 API Documentation
 -----------------
