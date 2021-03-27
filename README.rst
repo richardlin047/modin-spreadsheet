@@ -16,9 +16,9 @@ results.
 Modin-spreadsheet builds on top of `SlickGrid <https://github.com/mleibman/SlickGrid>`_ and Modin to provide a highly
 responsive experience even on DataFrames with 100,000 rows.
 
-Modin-spreadsheet is forked from Qgrid, which was developed by Quantopian. Some documentation will reference Qgrid
-documentation as we continue to build out our own documentation. To learn more about Qgrid, here is an
-`introduction on YouTube <https://www.youtube.com/watch?v=AsJJpgwIX0Q>`_.
+Modin-spreadsheet is forked from `Qgrid <https://github.com/quantopian/qgrid>`_, which was developed by Quantopian.
+Some documentation will reference Qgrid documentation as we continue to build out our own documentation. To learn more
+about Qgrid, here is an `introduction on YouTube <https://www.youtube.com/watch?v=AsJJpgwIX0Q>`_.
 
 Here is an example of the Modin-spreadsheet widget in action.
 
