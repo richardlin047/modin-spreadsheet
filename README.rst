@@ -91,6 +91,44 @@ multi-indexed DataFrame:
          :target: https://s3.amazonaws.com/quantopian-forums/pipeline_with_qgrid.png
          :width: 100px
 
+**Events API**:
+The Events API provides ``on`` and ``off`` methods which can be used to attach/detach event handlers. They're available
+on both the ``modin_spreadsheet`` module (see `qgrid.on <https://qgrid.readthedocs.io/en/latest/#qgrid.on>`_), and on
+individual SpreadsheetWidget instances (see `qgrid.QgridWidget.on <https://qgrid.readthedocs.io/en/latest/#qgrid.QgridWidget.on>`_).
+
+Having the ability to attach event handlers allows us to do some interesting things in terms of using modin-spreadsheet
+in conjunction with other widgets/visualizations. One example is using modin-spreadsheet to filter a DataFrame that's
+also being displayed by another visualization.
+
+Here's how you would use the ``on`` method to print the DataFrame every time there's a change made::
+
+    def handle_json_updated(event, spreadsheet_widget):
+        # exclude 'viewport_changed' events since that doesn't change the DataFrame
+        if (event['triggered_by'] != 'viewport_changed'):
+            print(spreadsheet_widget.get_changed_df())
+
+    spreadsheet_widget.on('json_updated', handle_json_updated)
+
+Here are some examples of how the Events API can be applied.
+
+This shows how you can use modin-spreadsheet to filter the data that's being shown by a matplotlib scatter plot:
+
+        .. figure:: docs/images/linked_to_scatter.gif
+         :align: left
+         :target: docs/images/linked_to_scatter.gif
+         :width: 600px
+
+          A brief demo showing modin-spreadsheet hooked up to a matplotlib plot
+
+This shows how events are recorded in real-time. The demo is recorded on JupyterLab, which is not yet supported, but
+the functionality is the same on Jupyter Notebook.
+
+        .. figure:: docs/images/events_api.gif
+         :align: left
+         :target: docs/images/events_api.gif
+         :width: 600px
+
+          A brief demo showing modin-spreadsheet's events api
 
 Running from source & testing your changes
 ------------------------------------------
@@ -135,46 +173,6 @@ Running automated tests
 ^^^^^^^^^^^^^^^^^^^^^^^
 There is a small python test suite which can be run locally by running the command ``pytest`` in the root folder
 of the repository.
-
-Events API
-----------
-The Events API provides ``on`` and ``off`` methods which can be used to attach/detach event handlers. They're available
-on both the ``modin_spreadsheet`` module (see `qgrid.on <https://qgrid.readthedocs.io/en/latest/#qgrid.on>`_), and on
-individual SpreadsheetWidget instances (see `qgrid.QgridWidget.on <https://qgrid.readthedocs.io/en/latest/#qgrid.QgridWidget.on>`_).
-
-Having the ability to attach event handlers allows us to do some interesting things in terms of using modin-spreadsheet
-in conjunction with other widgets/visualizations. One example is using modin-spreadsheet to filter a DataFrame that's
-also being displayed by another visualization.
-
-Here's how you would use the ``on`` method to print the DataFrame every time there's a change made::
-
-    def handle_json_updated(event, spreadsheet_widget):
-        # exclude 'viewport_changed' events since that doesn't change the DataFrame
-        if (event['triggered_by'] != 'viewport_changed'):
-            print(spreadsheet_widget.get_changed_df())
-
-    spreadsheet_widget.on('json_updated', handle_json_updated)
-
-Here are some examples of how the Events API can be applied.
-
-This shows how you can use modin-spreadsheet to filter the data that's being shown by a matplotlib scatter plot:
-
-        .. figure:: docs/images/linked_to_scatter.gif
-         :align: left
-         :target: docs/images/linked_to_scatter.gif
-         :width: 600px
-
-          A brief demo showing modin-spreadsheet hooked up to a matplotlib plot
-
-This shows how events are recorded in real-time. The demo is recorded on JupyterLab, which is not yet supported, but
-the functionality is the same on Jupyter Notebook.
-
-        .. figure:: docs/images/events_api.gif
-         :align: left
-         :target: docs/images/events_api.gif
-         :width: 600px
-
-          A brief demo showing modin-spreadsheet's events api
 
 Contributing
 ------------
