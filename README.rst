@@ -5,7 +5,7 @@
     :alt: Modin
 
 =================
-modin-spreadsheet
+Modin-spreadsheet
 =================
 Modin-spreadsheet is the underlying package for the `Modin <https://modin.readthedocs.io>`_ Spreadsheet API. It renders
 DataFrames within a Jupyter notebook as a spreadsheet and makes it easy to explore with intuitive scrolling, sorting,
@@ -36,7 +36,7 @@ Full documentation for Modin-spreadsheet is still in progress. Most features are
 
 Installation
 ------------
-Modin-spreadsheet is intended be used through the `Modin Spreadsheet API <https://modin.readthedocs.io>`_ (Docs in progress...). Please install Modin and modin-spreadsheet by running the following: ::
+Modin-spreadsheet is intended be used through the `Modin Spreadsheet API <https://modin.readthedocs.io>`_ (Docs in progress...). Please install Modin and Modin-spreadsheet by running the following: ::
 
     pip install modin
     pip install modin[spreadsheet]
@@ -99,8 +99,8 @@ The Events API provides ``on`` and ``off`` methods which can be used to attach/d
 on both the ``modin_spreadsheet`` module (see `qgrid.on <https://qgrid.readthedocs.io/en/latest/#qgrid.on>`_), and on
 individual SpreadsheetWidget instances (see `qgrid.QgridWidget.on <https://qgrid.readthedocs.io/en/latest/#qgrid.QgridWidget.on>`_).
 
-Having the ability to attach event handlers allows us to do some interesting things in terms of using modin-spreadsheet
-in conjunction with other widgets/visualizations. One example is using modin-spreadsheet to filter a DataFrame that's
+Having the ability to attach event handlers allows us to do some interesting things in terms of using Modin-spreadsheet
+in conjunction with other widgets/visualizations. One example is using Modin-spreadsheet to filter a DataFrame that's
 also being displayed by another visualization.
 
 Here's how you would use the ``on`` method to print the DataFrame every time there's a change made::
@@ -114,7 +114,7 @@ Here's how you would use the ``on`` method to print the DataFrame every time the
 
 Here are some examples of how the Events API can be applied.
 
-This shows how you can use modin-spreadsheet to filter the data that's being shown by a matplotlib scatter plot:
+This shows how you can use Modin-spreadsheet to filter the data that's being shown by a matplotlib scatter plot:
 
 .. figure:: docs/images/linked_to_scatter.gif
     :align: left
@@ -136,8 +136,8 @@ the functionality is the same on Jupyter Notebook.
 Running from source & testing your changes
 ------------------------------------------
 
-If you'd like to contribute to modin-spreadsheet, or just want to be able to modify the source code for your own purposes, you'll
-want to clone this repository and run modin-spreadsheet from your local copy of the repository.  The following steps explain how
+If you'd like to contribute to Modin-spreadsheet, or just want to be able to modify the source code for your own purposes, you'll
+want to clone this repository and run Modin-spreadsheet from your local copy of the repository.  The following steps explain how
 to do this.
 
 #. Clone the repository from GitHub and ``cd`` into the top-level directory::
@@ -150,11 +150,11 @@ to do this.
 
     pip install -e .
 
-#. Install the node packages that modin-spreadsheet depends on and build modin-spreadsheet's javascript using webpack::
+#. Install the node packages that Modin-spreadsheet depends on and build Modin-spreadsheet's javascript using webpack::
 
     cd js && npm install .
 
-#. Install and enable modin-spreadsheet's javascript in your local jupyter notebook environment::
+#. Install and enable Modin-spreadsheet's javascript in your local jupyter notebook environment::
 
     jupyter nbextension install --py --symlink --sys-prefix modin_spreadsheet && jupyter nbextension enable --py --sys-prefix modin_spreadsheet
 
@@ -164,12 +164,12 @@ to do this.
 
 Manually testing server-side changes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-If the code you need to change is in modin-spreadsheet's python code, then restart the kernel of the notebook you're in and
-rerun any modin-spreadsheet cells to see your changes take effect.
+If the code you need to change is in Modin-spreadsheet's python code, then restart the kernel of the notebook you're in and
+rerun any Modin-spreadsheet cells to see your changes take effect.
 
 Manually testing client-side changes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-If the code you need to change is in modin-spreadsheet's javascript or css code, repeat step 3 to rebuild modin-spreadsheet's npm package,
+If the code you need to change is in Modin-spreadsheet's javascript or css code, repeat step 3 to rebuild Modin-spreadsheet's npm package,
 then refresh the browser tab where you're viewing your notebook to see your changes take effect.
 
 Running automated tests
@@ -180,9 +180,9 @@ of the repository.
 Contributing
 ------------
 All contributions, bug reports, bug fixes, documentation improvements, enhancements, and ideas are welcome. See the
-`Running from source & testing your changes`_ section above for more details on local modin-spreadsheet development.
+`Running from source & testing your changes`_ section above for more details on local Modin-spreadsheet development.
 
-If you are looking to start working with the modin-spreadsheet codebase, navigate to the GitHub issues tab and start looking
+If you are looking to start working with the Modin-spreadsheet codebase, navigate to the GitHub issues tab and start looking
 through interesting issues.
 
 Feel free to ask questions by submitting an issue with your question.
