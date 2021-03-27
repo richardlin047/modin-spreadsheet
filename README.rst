@@ -22,12 +22,12 @@ about Qgrid, here is an `introduction on YouTube <https://www.youtube.com/watch?
 
 Here is an example of the Modin-spreadsheet widget in action.
 
-        .. figure:: docs/images/overview_demo.gif
-         :align: left
-         :target: docs/images/overview_demo.gif
-         :width: 200px
+.. figure:: docs/images/overview_demo.gif
+    :align: left
+    :target: docs/images/overview_demo.gif
+    :width: 200px
 
-          A brief demo showing filtering, editing, history, and exporting the changed dataframe
+    A brief demo showing filtering, editing, history, and exporting the changed dataframe
 
 API Documentation
 -----------------
@@ -87,9 +87,11 @@ done when viewing DataFrames as a static html table.  The following image shows 
 multi-indexed DataFrame:
 
 .. figure:: https://s3.amazonaws.com/quantopian-forums/pipeline_with_qgrid.png
-         :align: left
-         :target: https://s3.amazonaws.com/quantopian-forums/pipeline_with_qgrid.png
-         :width: 100px
+    :align: left
+    :target: https://s3.amazonaws.com/quantopian-forums/pipeline_with_qgrid.png
+    :width: 100px
+
+    Disclaimer: This is from the Qgrid documentation.
 
 **Events API**:
 The Events API provides ``on`` and ``off`` methods which can be used to attach/detach event handlers. They're available
@@ -113,22 +115,22 @@ Here are some examples of how the Events API can be applied.
 
 This shows how you can use modin-spreadsheet to filter the data that's being shown by a matplotlib scatter plot:
 
-        .. figure:: docs/images/linked_to_scatter.gif
-         :align: left
-         :target: docs/images/linked_to_scatter.gif
-         :width: 600px
+.. figure:: docs/images/linked_to_scatter.gif
+    :align: left
+    :target: docs/images/linked_to_scatter.gif
+    :width: 600px
 
-          A brief demo showing modin-spreadsheet hooked up to a matplotlib plot
+    A brief demo showing Modin-spreadsheet hooked up to a matplotlib plot. Disclaimer: This is from the Qgrid documentation.
 
 This shows how events are recorded in real-time. The demo is recorded on JupyterLab, which is not yet supported, but
 the functionality is the same on Jupyter Notebook.
 
-        .. figure:: docs/images/events_api.gif
-         :align: left
-         :target: docs/images/events_api.gif
-         :width: 600px
+.. figure:: docs/images/events_api.gif
+    :align: left
+    :target: docs/images/events_api.gif
+    :width: 600px
 
-          A brief demo showing modin-spreadsheet's events api
+    A brief demo showing Modin-spreadsheet's Events API. Disclaimer: This is from the Qgrid documentation.
 
 Running from source & testing your changes
 ------------------------------------------
