@@ -64,16 +64,24 @@ class _DefaultSettings(object):
             "width": None,
         }
         self._show_toolbar = True
+        self._show_history = True
         self._precision = None  # Defer to pandas.get_option
 
     def set_grid_option(self, optname, optvalue):
         self._grid_options[optname] = optvalue
 
     def set_defaults(
-        self, show_toolbar=None, precision=None, grid_options=None, column_options=None
+        self,
+        show_toolbar=None,
+        show_history=None,
+        precision=None,
+        grid_options=None,
+        column_options=None,
     ):
         if show_toolbar is not None:
             self._show_toolbar = show_toolbar
+        if show_history is not None:
+            self._show_history = show_history
         if precision is not None:
             self._precision = precision
         if grid_options is not None:
@@ -84,6 +92,10 @@ class _DefaultSettings(object):
     @property
     def show_toolbar(self):
         return self._show_toolbar
+
+    @property
+    def show_history(self):
+        return self._show_history
 
     @property
     def grid_options(self):
@@ -137,7 +149,11 @@ HISTORY_PREFIX = "# ---- spreadsheet transformation history ----\n"
 
 
 def set_defaults(
-    show_toolbar=None, precision=None, grid_options=None, column_options=None
+    show_toolbar=None,
+    show_history=None,
+    precision=None,
+    grid_options=None,
+    column_options=None,
 ):
     """
     Set the default modin-spreadsheet options.  The options that you can set here are the
@@ -162,6 +178,7 @@ def set_defaults(
     """
     defaults.set_defaults(
         show_toolbar=show_toolbar,
+        show_history=show_history,
         precision=precision,
         grid_options=grid_options,
         column_options=column_options,
@@ -327,6 +344,7 @@ def disable():
 def show_grid(
     data_frame,
     show_toolbar=None,
+    show_history=None,
     precision=None,
     grid_options=None,
     column_options=None,
@@ -365,6 +383,9 @@ def show_grid(
         Whether to show a toolbar with options for adding/removing rows.
         Adding/removing rows is an experimental feature which only works
         with DataFrames that have an integer index.
+    show_history : bool
+        Whether to show the cell containing the spreadsheet transformation
+        history.
     column_options : dict
         Column options that are to be applied to every column. See the
         Notes section below for more information on the available options,
@@ -478,6 +499,8 @@ def show_grid(
 
     if show_toolbar is None:
         show_toolbar = defaults.show_toolbar
+    if show_history is None:
+        show_history = defaults.show_history
     if precision is None:
         precision = defaults.precision
     if not isinstance(precision, Integral):
@@ -512,12 +535,13 @@ def show_grid(
     # create a visualization for the dataframe
     return SpreadsheetWidget(
         df=data_frame,
+        show_toolbar=show_toolbar,
+        show_history=show_history,
         precision=precision,
         grid_options=grid_options,
         column_options=column_options,
         column_definitions=column_definitions,
         row_edit_callback=row_edit_callback,
-        show_toolbar=show_toolbar,
     )
 
 
@@ -564,6 +588,8 @@ class SpreadsheetWidget(widgets.DOMWidget):
         Get/set the precision options being used by the current instance.
     show_toolbar : bool
         Get/set the show_toolbar option being used by the current instance.
+    show_history : bool
+        Get/set the show_history option being used by the current instance.
     column_options : bool
         Get/set the column options being used by the current instance.
     column_definitions : bool
@@ -615,6 +641,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
     column_definitions = Dict({})
     row_edit_callback = Instance(FunctionType, sync=False, allow_none=True)
     show_toolbar = Bool(True, sync=True)
+    show_history = Bool(True, sync=True)
     id = Unicode(sync=True)
 
     def __init__(self, *args, **kwargs):
@@ -644,6 +671,9 @@ class SpreadsheetWidget(widgets.DOMWidget):
 
     def _show_toolbar_default(self):
         return defaults.show_toolbar
+
+    def _show_history_default(self):
+        return defaults.show_history
 
     def on(self, names, handler):
         """
@@ -1662,14 +1692,15 @@ class SpreadsheetWidget(widgets.DOMWidget):
             self._update_table(triggered_by="reset_filters")
             self._notify_listeners({"name": "filters_reset"})
         elif content["type"] == "initialize_history":
-            # Send metadata tag to frontend
-            self.send(
-                {
-                    "type": "initialize_history",
-                    "metadata_tag": self._history_metadata_tag,
-                }
-            )
-            self._update_history_cell()
+            if self.show_history:
+                # Send metadata tag to frontend
+                self.send(
+                    {
+                        "type": "initialize_history",
+                        "metadata_tag": self._history_metadata_tag,
+                    }
+                )
+                self._update_history_cell()
         elif content["type"] == "clear_history":
             self.clear_history(from_api=False)
 
@@ -1981,6 +2012,8 @@ class SpreadsheetWidget(widgets.DOMWidget):
         self._update_history_cell()
 
     def _update_history_cell(self):
+        if not self.show_history:
+            return
         cleaned_history = "\n".join(self._history)
         cell_text = HISTORY_PREFIX + cleaned_history
         self.send(
