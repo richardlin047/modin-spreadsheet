@@ -24,6 +24,7 @@ from traitlets import (
 from itertools import chain
 from uuid import uuid4
 from six import string_types
+from . import constants
 
 # versions of pandas prior to version 0.20.0 don't support the orient='table'
 # when calling the 'to_json' function on DataFrames.  to get around this we
@@ -145,7 +146,6 @@ class _EventHandlers(object):
 
 defaults = _DefaultSettings()
 handlers = _EventHandlers()
-HISTORY_PREFIX = "# ---- spreadsheet transformation history ----\n"
 
 
 def set_defaults(
@@ -1125,7 +1125,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
                     self._df.sort_index(ascending=self._sort_ascending, inplace=True)
                     # Record sort index
                     self._record_transformation(
-                        f"# Sort index\n"
+                        f"{constants.SORT_INDEX}\n"
                         f"df.sort_index(ascending={self._sort_ascending}, inplace=True)"
                     )
                 else:
@@ -1136,7 +1136,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
                     # Record sort index
                     # TODO: Fix level=level_index
                     self._record_transformation(
-                        f"# Sort index\n"
+                        f"{constants.SORT_INDEX}\n"
                         f"df.sort_index(level=level_index, ascending={self._sort_ascending}, "
                         f"inplace=True)"
                     )
@@ -1148,7 +1148,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
                 )
                 # Record sort column
                 self._record_transformation(
-                    f"# Sort column\n"
+                    f"{constants.SORT_COLUMN}\n"
                     f"df.sort_values('{self._sort_field}', ascending={self._sort_ascending}, "
                     f"inplace=True)"
                 )
@@ -1168,7 +1168,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
             helper_col = self._sort_field + self._sort_col_suffix
             self._record_transformation(
                 (
-                    f"#Sort mixed type column\n"
+                    f"{constants.SORT_MIXED_TYPE_COLUMN}\n"
                     f"df['{helper_col}'] = df['{self._sort_field}'].map(str)\n"
                     f"df.sort_values('{helper_col}', ascending={self._sort_ascending}, inplace=True)\n"
                     f"df.drop(columns='{helper_col}', inplace=True)"
@@ -1496,7 +1496,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
             # Record reset filter
             # Other filters and sorts are reapplied after
             self._record_transformation(
-                f"# Reset filter\n" f"df = unfiltered_df.copy()"
+                f"{constants.RESET_FILTER}\n" f"df = unfiltered_df.copy()"
             )
         else:
             combined_condition = conditions[0]
@@ -1509,7 +1509,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
                 ["(" + c + ")" for c in self._filter_conditions]
             )
             self._record_transformation(
-                f"# Filter columns\n"
+                f"{constants.FILTER_COLUMNS}\n"
                 f"df = unfiltered_df[{record_combined_condition}].copy()"
             )
             # Reset filter conditions
@@ -1557,7 +1557,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
                 self._df.loc[location] = val_to_set
                 # Record cell edit
                 self._record_transformation(
-                    f"# Edit cell\n"
+                    f"{constants.EDIT_CELL}\n"
                     f"df.loc[{location}]={repr(val_to_set)}\n"
                     f"unfiltered_df.loc[{location}]={repr(val_to_set)}"
                 )
@@ -1686,7 +1686,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
             self._resetting_filters = False
             # Record reset filters before updating sort
             self._record_transformation(
-                ("# Reset all filters\n" "df = unfiltered_df.copy()")
+                (f"{constants.RESET_ALL_FILTERS}\n" "df = unfiltered_df.copy()")
             )
             self._update_sort()
             self._update_table(triggered_by="reset_filters")
@@ -1703,6 +1703,9 @@ class SpreadsheetWidget(widgets.DOMWidget):
                 self._update_history_cell()
         elif content["type"] == "clear_history":
             self.clear_history(from_api=False)
+        elif content["type"] == "filter_history":
+            self._filter_relevant_history(persist=True)
+            self._notify_listeners({"name": "history_filtered", "source": "gui"})
 
     def _notify_listeners(self, event):
         # notify listeners at the module level
@@ -1800,7 +1803,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
         )
         # Record row add
         self._record_transformation(
-            f"# Add row\n"
+            f"{constants.ADD_ROW}\n"
             f"last = df.loc[max(df.index)].copy()\n"
             f"df.loc[last.name+1] = last.values\n"
             f"unfiltered_df.loc[last.name+1] = last.values"
@@ -1930,7 +1933,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
         self._update_table(triggered_by="remove_row")
         # Record remove rows
         self._record_transformation(
-            f"# Remove rows\n"
+            f"{constants.REMOVE_ROWS}\n"
             f"df.drop({selected_names}, inplace=True)\n"
             f"unfiltered_df.drop({selected_names}, inplace=True)"
         )
@@ -2015,7 +2018,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
         if not self.show_history:
             return
         cleaned_history = "\n".join(self._history)
-        cell_text = HISTORY_PREFIX + cleaned_history
+        cell_text = constants.HISTORY_PREFIX + cleaned_history
         self.send(
             {
                 "type": "update_history",
@@ -2058,10 +2061,56 @@ class SpreadsheetWidget(widgets.DOMWidget):
         # Record sort index
         # After update_table to prevent resetting in progress button prematurely
         self._record_transformation(
-            f"# Reset sort\n" f"df.sort_index(ascending=True, inplace=True)"
+            f"{constants.RESET_SORT}\n" f"df.sort_index(ascending=True, inplace=True)"
         )
         source = "api" if from_api else "gui"
         self._notify_listeners({"name": "sort_reset", "source": source})
 
     def reset_filters(self):
         self.send({"type": "reset_filters"})
+
+    def filter_relevant_history(self, persist=True):
+        relevant_history = self._filter_relevant_history(persist)
+        self._notify_listeners({"name": "history_filtered", "source": "api"})
+        return relevant_history
+
+    def _filter_relevant_history(self, persist):
+        history = self.get_history()
+        relevant_history = []
+        # Whether a filter or sort can still be added
+        add_filter = True
+        add_sort = True
+        # Check history in reverse
+        for cmd in history[::-1]:
+            # Add the latest filter after a reset filter
+            if cmd.startswith(constants.FILTER_COLUMNS):
+                if not add_filter:
+                    continue
+                relevant_history.insert(0, cmd)
+                add_filter = False
+            # Add the latest sort after a reset sort
+            elif (
+                cmd.startswith(constants.SORT_COLUMN)
+                or cmd.startswith(constants.SORT_INDEX)
+                or cmd.startswith(constants.SORT_MIXED_TYPE_COLUMN)
+            ):
+                if not add_sort:
+                    continue
+                relevant_history.insert(0, cmd)
+                add_sort = False
+            # Prevent adding filter
+            elif cmd.startswith(constants.RESET_FILTER) or cmd.startswith(
+                constants.RESET_ALL_FILTERS
+            ):
+                add_filter = False
+            # Prevent adding sort
+            elif cmd.startswith(constants.RESET_SORT):
+                add_sort = False
+            # Include edit cell, remove/add row, initialization, etc.
+            else:
+                relevant_history.insert(0, cmd)
+        # Change internal state if persisting
+        if persist:
+            self._history = relevant_history
+            self._update_history_cell()
+        return relevant_history
