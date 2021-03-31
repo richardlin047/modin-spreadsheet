@@ -168,7 +168,7 @@ setup_args = {
     "zip_safe": False,
     "author": "Modin Maintainers",
     "author_email": "dev@modin.org",
-    "url": "https://github.com/modin-project/qgrid",
+    "url": "https://github.com/modin-project/modin-spreadsheet",
     "license": "Apache-2.0",
     "keywords": [
         "ipython",

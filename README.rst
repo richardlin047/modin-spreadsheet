@@ -142,8 +142,8 @@ to do this.
 
 #. Clone the repository from GitHub and ``cd`` into the top-level directory::
 
-    git clone https://github.com/modin-project/qgrid.git
-    cd qgrid
+    git clone https://github.com/modin-project/modin-spreadsheet.git
+    cd modin-spreadsheet
 
 #. Install the current project in `editable <https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs>`_
    mode::
