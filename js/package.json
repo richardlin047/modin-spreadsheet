@@ -6,7 +6,7 @@
   "main": "src/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/modin-project/qgrid"
+    "url": "https://github.com/modin-project/modin-spreadsheet"
   },
   "keywords": [
     "jupyter",

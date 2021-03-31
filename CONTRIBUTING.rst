@@ -7,7 +7,7 @@ to install from source and make local changes to their copy of modin-spreadsheet
 All contributions, bug reports, bug fixes, documentation improvements, enhancements and ideas are welcome.
 We `track issues`__ on `GitHub`__ and that's also the best place to ask any questions you may have.
 
-__ https://github.com/modin-project/qgrid#running-from-source--testing-your-changes
-__ https://github.com/modin-project/qgrid
-__ https://github.com/modin-project/qgrid/issues
+__ https://github.com/modin-project/modin-spreadsheet#running-from-source--testing-your-changes
+__ https://github.com/modin-project/modin-spreadsheet
+__ https://github.com/modin-project/modin-spreadsheet/issues
 __ https://github.com/
