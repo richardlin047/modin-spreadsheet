@@ -1165,7 +1165,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
             )
             # Record mixed type column sort
             # Create stringified helper column to sort on
-            helper_col = self._sort_field + self._sort_col_suffix
+            helper_col = str(self._sort_field) + self._sort_col_suffix
             self._record_transformation(
                 (
                     f"{constants.SORT_MIXED_TYPE_COLUMN}\n"
