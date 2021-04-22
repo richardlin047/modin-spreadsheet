@@ -1084,3 +1084,55 @@ def test_mixed_type_sort():
     expected_order_1 = [1, 2, 4, 5, "hello"]
     sorted_order_1 = list(spreadsheet.get_changed_df()[1])
     assert expected_order_1 == sorted_order_1
+
+
+def test_column_reorder():
+    #notes/optimizations?: enable_column_reorder flag, if didn't actually move the column don't put in transformation history
+    #bug: edit cell doesn't work after moving column
+    spreadsheet = SpreadsheetWidget(df=create_df())
+
+    spreadsheet._handle_view_msg_helper(
+        {'column_names': ['modin_spreadsheet_unfiltered_index',
+                          'Date',
+                          'C',
+                          'D',
+                          'E',
+                          'F',
+                          'A'],
+         'type': 'reorder_columns'}
+    )
+
+    expected_columns = ['Date', 'C', 'D', 'E', 'F', 'A']
+    actual_columns = list(spreadsheet.get_changed_df().columns)
+    assert expected_columns == actual_columns
+
+    spreadsheet._handle_view_msg_helper(
+        {'column_names': ['modin_spreadsheet_unfiltered_index',
+                          'Date',
+                          'C',
+                          'F',
+                          'D',
+                          'E',
+                          'A'],
+         'type': 'reorder_columns'}
+    )
+
+    expected_columns = ['Date', 'C', 'F', 'D', 'E', 'A']
+    actual_columns = list(spreadsheet.get_changed_df().columns)
+    assert expected_columns == actual_columns
+
+
+if __name__ == "__main__":
+    test_column_reorder()
+
+
+
+
+
+
+
+
+
+
+
+
