@@ -1087,52 +1087,63 @@ def test_mixed_type_sort():
 
 
 def test_column_reorder():
-    #notes/optimizations?: enable_column_reorder flag, if didn't actually move the column don't put in transformation history
-    #bug: edit cell doesn't work after moving column
     spreadsheet = SpreadsheetWidget(df=create_df())
 
     spreadsheet._handle_view_msg_helper(
-        {'column_names': ['modin_spreadsheet_unfiltered_index',
-                          'Date',
-                          'C',
-                          'D',
-                          'E',
-                          'F',
-                          'A'],
-         'type': 'reorder_columns'}
+        {"column_names": ["Date", "C", "D", "E", "F", "A"], "type": "reorder_columns"}
     )
 
-    expected_columns = ['Date', 'C', 'D', 'E', 'F', 'A']
+    expected_columns = ["Date", "C", "D", "E", "F", "A"]
     actual_columns = list(spreadsheet.get_changed_df().columns)
     assert expected_columns == actual_columns
 
     spreadsheet._handle_view_msg_helper(
-        {'column_names': ['modin_spreadsheet_unfiltered_index',
-                          'Date',
-                          'C',
-                          'F',
-                          'D',
-                          'E',
-                          'A'],
-         'type': 'reorder_columns'}
+        {"column_names": ["Date", "C", "F", "D", "E", "A"], "type": "reorder_columns"}
     )
 
-    expected_columns = ['Date', 'C', 'F', 'D', 'E', 'A']
+    expected_columns = ["Date", "C", "F", "D", "E", "A"]
     actual_columns = list(spreadsheet.get_changed_df().columns)
     assert expected_columns == actual_columns
 
 
-if __name__ == "__main__":
-    test_column_reorder()
+def test_column_reorder_multi():
+    df = pd.DataFrame(
+        {
+            "A": [1, 2, 3, 4],
+            "Date": pd.Timestamp("20130102"),
+            "C": pd.Series(1, index=list(range(4)), dtype="float32"),
+            "D": np.array([3] * 4, dtype="int32"),
+            "E": pd.Categorical(["test", "train", "foo", "bar"]),
+            "F": ["foo", "bar", "buzz", "fox"],
+        }
+    )
 
+    spreadsheet = SpreadsheetWidget(df=df)
 
+    spreadsheet._handle_view_msg_helper(
+        {"column_names": ["Date", "C", "A", "D", "E", "F"], "type": "reorder_columns"}
+    )
 
+    expected_columns = ["Date", "C", "A", "D", "E", "F"]
+    actual_columns = list(spreadsheet.get_changed_df().columns)
+    assert expected_columns == actual_columns
 
+    spreadsheet._handle_view_msg_helper(
+        {"type": "change_sort", "sort_field": "A", "sort_ascending": False}
+    )
 
+    expected_order = [4, 3, 2, 1]
+    sorted_order = list(spreadsheet.get_changed_df()["A"])
+    assert expected_order == sorted_order
 
+    spreadsheet._handle_view_msg_helper(
+        {
+            "row_index": 0,
+            "column": "A",
+            "unfiltered_index": 3,
+            "value": 5,
+            "type": "edit_cell",
+        }
+    )
 
-
-
-
-
-
+    assert spreadsheet.get_changed_df().loc[3, "A"] == 5

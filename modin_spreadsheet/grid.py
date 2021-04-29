@@ -1708,7 +1708,7 @@ class SpreadsheetWidget(widgets.DOMWidget):
             self._notify_listeners({"name": "history_filtered", "source": "gui"})
         elif content["type"] == "reorder_columns":
             column_names = content["column_names"]
-            #column_names.insert(0, "modin_spreadsheet_unfiltered_index") moved for testing reasons
+            column_names.insert(0, "modin_spreadsheet_unfiltered_index")
             column_names.extend(list(self._sort_helper_columns.values()))
             self._df = self._df.reindex(columns=column_names)
             self._unfiltered_df = self._unfiltered_df.reindex(columns=column_names)
