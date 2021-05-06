@@ -1087,32 +1087,12 @@ def test_mixed_type_sort():
 
 
 def test_column_reorder():
-    spreadsheet = SpreadsheetWidget(df=create_df())
-
-    spreadsheet._handle_view_msg_helper(
-        {"column_names": ["Date", "C", "D", "E", "F", "A"], "type": "reorder_columns"}
-    )
-
-    expected_columns = ["Date", "C", "D", "E", "F", "A"]
-    actual_columns = list(spreadsheet.get_changed_df().columns)
-    assert expected_columns == actual_columns
-
-    spreadsheet._handle_view_msg_helper(
-        {"column_names": ["Date", "C", "F", "D", "E", "A"], "type": "reorder_columns"}
-    )
-
-    expected_columns = ["Date", "C", "F", "D", "E", "A"]
-    actual_columns = list(spreadsheet.get_changed_df().columns)
-    assert expected_columns == actual_columns
-
-
-def test_column_reorder_multi():
     df = pd.DataFrame(
         {
             "A": [1, 2, 3, 4],
             "Date": pd.Timestamp("20130102"),
             "C": pd.Series(1, index=list(range(4)), dtype="float32"),
-            "D": np.array([3] * 4, dtype="int32"),
+            1: np.array([3] * 4, dtype="int32"),
             "E": pd.Categorical(["test", "train", "foo", "bar"]),
             "F": ["foo", "bar", "buzz", "fox"],
         }
@@ -1120,14 +1100,25 @@ def test_column_reorder_multi():
 
     spreadsheet = SpreadsheetWidget(df=df)
 
+    # check basic column reorder (move column A behind C)
     spreadsheet._handle_view_msg_helper(
-        {"column_names": ["Date", "C", "A", "D", "E", "F"], "type": "reorder_columns"}
+        {"column_names": ["Date", "C", "A", 1, "E", "F"], "type": "reorder_columns"}
     )
 
-    expected_columns = ["Date", "C", "A", "D", "E", "F"]
+    expected_columns = ["Date", "C", "A", 1, "E", "F"]
     actual_columns = list(spreadsheet.get_changed_df().columns)
     assert expected_columns == actual_columns
 
+    # check non-string column name reorder (move column 1 behind F)
+    spreadsheet._handle_view_msg_helper(
+        {"column_names": ["Date", "C", "A", "E", "F", 1], "type": "reorder_columns"}
+    )
+
+    expected_columns = ["Date", "C", "A", "E", "F", 1]
+    actual_columns = list(spreadsheet.get_changed_df().columns)
+    assert expected_columns == actual_columns
+
+    # check sort on column A is correct
     spreadsheet._handle_view_msg_helper(
         {"type": "change_sort", "sort_field": "A", "sort_ascending": False}
     )
@@ -1136,11 +1127,12 @@ def test_column_reorder_multi():
     sorted_order = list(spreadsheet.get_changed_df()["A"])
     assert expected_order == sorted_order
 
+    # check editing cell in column A is correct
     spreadsheet._handle_view_msg_helper(
         {
             "row_index": 0,
             "column": "A",
-            "unfiltered_index": 3,
+            "unfiltered_index": 0,
             "value": 5,
             "type": "edit_cell",
         }

@@ -586,11 +586,11 @@ class ModinSpreadsheetView extends widgets.DOMWidgetView {
 
     this.slick_grid.onColumnsReordered.subscribe((e, args) => {
       var column_names = [];
-      var num_columns = args["grid"]["getColumns"]().length;
+      var num_columns = args.grid.getColumns().length;
 
       for(var i = 1; i < num_columns; i+= 1) {
-        var column_name = args["grid"]["getColumns"]()[i]["name"]
-        column_names.push(column_name)
+        var column_name = args.grid.getColumns()[i].name;
+        column_names.push(column_name);
       }
 
       var msg = {'column_names': column_names, 'type': 'reorder_columns'};
