@@ -1708,15 +1708,15 @@ class SpreadsheetWidget(widgets.DOMWidget):
             self._notify_listeners({"name": "history_filtered", "source": "gui"})
         elif content["type"] == "reorder_columns":
             column_names = content["column_names"]
-            column_names.insert(0, "modin_spreadsheet_unfiltered_index")
-            column_names.extend(list(self._sort_helper_columns.values()))
-            self._df = self._df.reindex(columns=column_names)
-            self._unfiltered_df = self._unfiltered_df.reindex(columns=column_names)
             self._record_transformation(
                 f"{constants.REORDER_COLUMN}\n"
                 f"df = df.reindex(columns={column_names})\n"
                 f"unfiltered_df = unfiltered_df.reindex(columns={column_names})"
             )
+            column_names.insert(0, "modin_spreadsheet_unfiltered_index")
+            column_names.extend(list(self._sort_helper_columns.values()))
+            self._df = self._df.reindex(columns=column_names)
+            self._unfiltered_df = self._unfiltered_df.reindex(columns=column_names)
 
     def _notify_listeners(self, event):
         # notify listeners at the module level
