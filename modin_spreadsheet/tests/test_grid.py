@@ -22,12 +22,14 @@ def assert_modin_frame_equals(df, expected):
 def create_df():
     return pd.DataFrame(
         {
-            "A": 1.0,
-            "Date": pd.Timestamp("20130102"),
-            "C": pd.Series(1, index=list(range(4)), dtype="float32"),
-            "D": np.array([3] * 4, dtype="int32"),
+            "A": [1.0, 2.0, 1.0, 3.0],
+            "Date": [pd.Timestamp("20130102"), pd.Timestamp("20140102"), pd.Timestamp("20140202"), pd.Timestamp("20130102")],
+            "C": pd.Series([1, 2, 3, 4], index=list(range(4)), dtype="float32"),
+            "D": np.array([3, 2, 1, 4], dtype="int32"),
             "E": pd.Categorical(["test", "train", "foo", "bar"]),
             "F": ["foo", "bar", "buzz", "fox"],
+            "Mixed": [pd.Timestamp("2017-02-02"), np.nan, 1e10, "hey"],
+            1: [5, 4, "hello", 1],
         }
     )
 
@@ -149,36 +151,28 @@ def check_edit_success(
 
 
 def test_edit_number():
-    old_val = 3
-    view = SpreadsheetWidget(df=create_df())
-
+    df = create_df()
+    view = SpreadsheetWidget(df=df)
+    old_val = df.loc[2, "D"]
     for idx in range(-10, 10, 1):
         check_edit_success(view, "D", 2, old_val, old_val, idx, idx)
         old_val = idx
 
 
 def test_add_row_button():
-    widget = SpreadsheetWidget(df=create_df())
+    df = create_df()
+    widget = SpreadsheetWidget(df=df)
     event_history = init_event_history("row_added", widget=widget)
 
     widget._handle_view_msg_helper({"type": "add_row"})
 
     assert event_history == [{"name": "row_added", "index": 4, "source": "gui"}]
 
-    # make sure the added row in the internal dataframe contains the
-    # expected values
+    # make sure the added row in the internal dataframe duplicates the
+    # last row and increments the index
     added_index = event_history[0]["index"]
-    expected_values = pd.Series(
-        {
-            "modin_spreadsheet_unfiltered_index": 4,
-            "A": 1,
-            "C": 1,
-            "D": 3,
-            "Date": pd.Timestamp("2013-01-02 00:00:00"),
-            "E": "bar",
-            "F": "fox",
-        }
-    )
+    expected_values = df.iloc[3,:]
+    expected_values["modin_spreadsheet_unfiltered_index"] = 4
     sort_idx = widget._df.loc[added_index].index
     assert (widget._df.loc[added_index] == expected_values[sort_idx]).all()
 
@@ -917,7 +911,7 @@ def test_apply_history():
                 "field": "Date",
                 "type": "date",
                 "min": 1356998400000,
-                "max": 1357171199999,
+                "max": 1400000000000,
             },
         }
     )
