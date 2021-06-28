@@ -11,6 +11,13 @@ import numpy as np
 import modin.pandas as pd
 import json
 
+# Compares values between two modin dataframes. NaNs in the same positions
+# are considered equal, whereas in the equals function they are not.
+# pandas.testing.assert_frame_equals doesn't work with modin dataframes.
+def assert_modin_frame_equals(df, expected):
+    comparison_normal = df == expected
+    comparison_NaN = df.isna() == expected.isna()
+    assert all(comparison_normal | comparison_NaN)
 
 def create_df():
     return pd.DataFrame(
@@ -264,7 +271,7 @@ def test_get_selected_df():
     view._handle_view_msg_helper({"rows": selected_rows, "type": "change_selection"})
     selected_df = view.get_selected_df()
     assert len(selected_df) == 2
-    assert sample_df.iloc[selected_rows].equals(selected_df)
+    assert_modin_frame_equals(sample_df.iloc[selected_rows], pd.DataFrame(selected_df))
 
 
 def test_integer_index_filter():
@@ -939,15 +946,15 @@ def test_apply_history():
     changed_df = spreadsheet.get_changed_df()
 
     # Checks that spreadsheet df is not modified in place
-    assert not changed_df.equals(df)
+    assert_modin_frame_equals(changed_df, df)
 
     applied_df = spreadsheet.apply_history(df_copy)
 
     # Checks that apply_history does not modify in place
-    assert df.equals(df_copy)
+    assert_modin_frame_equals(df, df_copy)
 
     # Checks that the history is applied properly
-    assert changed_df.equals(applied_df)
+    assert_modin_frame_equals(changed_df, applied_df)
 
 
 def test_filter_relevant_history():
