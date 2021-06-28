@@ -866,6 +866,15 @@ def test_get_history():
     expected_history = "# Reset sort\ndf.sort_index(ascending=True, inplace=True)"
     assert last_history == expected_history
 
+    # Reorder columns
+    # Should also check that no helper columns are recorded
+    spreadsheet._handle_view_msg_helper(
+        {"column_names": ['A', 'Date', 'C', 'F', 'E', 'D', 'Mixed', 1], "type": "reorder_columns"}
+    )
+    last_history = spreadsheet.get_history()[-1]
+    expected_history = "# Reorder column\ndf = df.reindex(columns=['A', 'Date', 'C', 'F', 'E', 'D', 'Mixed', 1])\nunfiltered_df = unfiltered_df.reindex(columns=['A', 'Date', 'C', 'F', 'E', 'D', 'Mixed', 1])"
+    assert last_history == expected_history
+
     # Clear history
     spreadsheet._handle_view_msg_helper({"type": "clear_history"})
     history = spreadsheet.get_history()
@@ -926,6 +935,9 @@ def test_apply_history():
             "value": 2,
             "type": "edit_cell",
         }
+    )
+    spreadsheet._handle_view_msg_helper(
+        {"column_names": ['Date', 1, 'A', 'C', 'F', 'Mixed', 'E', 'D'], "type": "reorder_columns"}
     )
     spreadsheet._handle_view_msg_helper(
         {
@@ -1035,12 +1047,16 @@ def test_filter_relevant_history():
         "# Add row\nlast = df.loc[max(df.index)].copy()\ndf.loc[last.name+1] = last.values\nunfiltered_df.loc[last.name+1] = last.values",
         "# Reset all filters\ndf = unfiltered_df.copy()",
         "# Sort index\ndf.sort_index(ascending=True, inplace=True)",
+        "# Reorder column\ndf = df.reindex(columns=['A', 'Date', 'C', 'E', 'D', 'F', 'Mixed', 1])\nunfiltered_df = unfiltered_df.reindex(columns=['A', 'Date', 'C', 'E', 'D', 'F', 'Mixed', 1])",
+        "# Reorder column\ndf = df.reindex(columns=['A', 'Date', 'C', 'F', 'E', 'D', 'Mixed', 1])\nunfiltered_df = unfiltered_df.reindex(columns=['A', 'Date', 'C', 'F', 'E', 'D', 'Mixed', 1])"
     ]
     expected_filtered_history = [
         "# Edit cell\ndf.loc[(4, 'trip_id')]=10\nunfiltered_df.loc[(4, 'trip_id')]=10",
         "# Remove rows\ndf.drop([6], inplace=True)\nunfiltered_df.drop([6], inplace=True)",
         "# Add row\nlast = df.loc[max(df.index)].copy()\ndf.loc[last.name+1] = last.values\nunfiltered_df.loc[last.name+1] = last.values",
         "# Sort index\ndf.sort_index(ascending=True, inplace=True)",
+        "# Reorder column\ndf = df.reindex(columns=['A', 'Date', 'C', 'E', 'D', 'F', 'Mixed', 1])\nunfiltered_df = unfiltered_df.reindex(columns=['A', 'Date', 'C', 'E', 'D', 'F', 'Mixed', 1])",
+        "# Reorder column\ndf = df.reindex(columns=['A', 'Date', 'C', 'F', 'E', 'D', 'Mixed', 1])\nunfiltered_df = unfiltered_df.reindex(columns=['A', 'Date', 'C', 'F', 'E', 'D', 'Mixed', 1])"
     ]
     spreadsheet._history = mixed_history
     filtered_history = spreadsheet.filter_relevant_history()
